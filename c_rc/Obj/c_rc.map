@@ -1,0 +1,420 @@
+Executable File = C:\Users\zyb\Desktop\c_rc\Bin\c_rc.out
+
+Timestamp is Sun Sep 25 18:03:27 2022
+
+
+Start		Length(Word)		Type		Name		Module
+0X000000	0X0008		Code		crt0@code		C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o
+0X000008	0X0001		Code		_interrupt@_ISR_isr		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000009	0X0000		Code		.CODE		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00000A	0X0004		Code		_SGV_INIT_CODE_BEGIN		C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o
+0X00000E	0X0000		Code		_SGV_INIT_CODE		C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o
+0X00000E	0X000C		Code		_SGV_INIT_CODE_END		C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o
+0X00001A	0X0048		Code		_Function_Sys_Init_code		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000062	0X0011		Code		_Function_Delayms_code		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000073	0X0015		Code		_Function_TimeDeal_code		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000088	0X0016		Code		_Function_ZhiJDeal_code		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00009E	0X000A		Code		_Function_KeyeDeal_code		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000A8	0X00EA		Code		_Function_AdccDeal_code		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000192	0X000D		Code		_Function_main_code		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00019F	0X0025		Code		_Function_ISR_isr_code		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0001C4	0X0005		Code		__DivUInt@RTL		2divuint.o
+0X0001C9	0X0011		Code		__MulInt@RTL		2mulint.o
+0X0001DA	0X0023		Code		__Get2ByteParaToDest@RTL		2get2bytepara.o
+0X0001FD	0X0030		Code		__Get2BytePara@RTL		2get2bytepara.o
+0X00022D	0X0028		Code		__DivUIntKernel@RTL		2divuintkernel.o
+0X000255	0X0007		Code		__Mov2ByteRamToLArg@RTL		2movramtolarg.o
+0X00025C	0X000F		Code		__Mov4ByteRamToLArg@RTL		2movramtolarg.o
+0X00026B	0X0007		Code		__Mov2ByteRamToRArg@RTL		2movramtorarg.o
+0X000272	0X000A		Code		__Mov4ByteRamToRArg@RTL		2movramtorarg.o
+
+Start		Length(Byte)		Type		Name		Module
+0X000000	0X0005		Data		crt0@data		C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o
+0X000005	0X0005		Data		_InterruptBackupData		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00000A	0X0001		Data		_VirtualReg		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00000B	0X000B		Data		__runtime_arg		2divuint.o
+0X00000B	0X000B		Data		__runtime_arg		2mulint.o
+0X00000B	0X000B		Data		__runtime_arg		2get2bytepara.o
+0X00000B	0X000B		Data		__runtime_arg		2divuintkernel.o
+0X00000B	0X000B		Data		__runtime_arg		2movramtolarg.o
+0X00000B	0X000B		Data		__runtime_arg		2movramtorarg.o
+0X000016	0X0001		Data		_RS_Cnt@segment		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000017	0X0001		Data		_RT_Cnt@segment		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000018	0X0001		Data		_AD_value@segment		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000019	0X0001		Data		_AD_Cnt@segment		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00001A	0X0001		Data		_JS1@segment		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00001B	0X0001		Data		_Funflag1@segment		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00001C	0X0001		Data		_Funflag0@segment		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00001D	0X0001		Data		_WorkGear@segment		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00001E	0X0001		Data		_WorkBuff@segment		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00001F	0X0001		Data		_Worktime@segment		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000020	0X0001		Data		_TimerCnt@segment		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000021	0X0003		Data		_Function_Delayms_data		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000021	0X0000		Data		_Function_TimeDeal_data		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000021	0X0000		Data		_Function_KeyeDeal_data		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000021	0X0000		Data		_Function_ISR_isr_data		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000024	0X0000		Data		_Function_Sys_Init_data		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000024	0X0000		Data		_Function_ZhiJDeal_data		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000024	0X0000		Data		_Function_AdccDeal_data		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000024	0X0000		Data		_Function_main_data		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00002E	0X0001		Data		_SDian_bz@segment		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00002F	0X0001		Data		_SDian_Cnt@segment		C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+
+Address		Type		Size(Byte)		Public/Local		Segment			Module
+0X000000	Section		0X010		L:crt0@code		crt0@code			C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o
+0X000008	No type		0X000		L:_vector_for_ISR_isr		_interrupt@_ISR_isr			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000008	Section		0X002		L:_interrupt@_ISR_isr		_interrupt@_ISR_isr			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000009	Section		0X000		L:.CODE		.CODE			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00000A	Section		0X008		L:_SGV_INIT_CODE_BEGIN		_SGV_INIT_CODE_BEGIN			C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o
+0X00000A	No type		0X000		P:_sgv_init_entry		_SGV_INIT_CODE_BEGIN			C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o
+0X00000E	Section		0X000		L:_SGV_INIT_CODE		_SGV_INIT_CODE			C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o
+0X00000E	Section		0X018		L:_SGV_INIT_CODE_END		_SGV_INIT_CODE_END			C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o
+0X000010	No type		0X000		P:__ClearWatchDogTimer		_SGV_INIT_CODE_END			C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o
+0X000013	No type		0X000		P:__ClrRAM		_SGV_INIT_CODE_END			C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o
+0X000015	No type		0X000		L:ClrRAM10		_SGV_INIT_CODE_END			C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o
+0X00001A	Section		0X090		L:_Function_Sys_Init_code		_Function_Sys_Init_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00001A	No type		0X000		P:_Sys_Init		_Function_Sys_Init_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000045	No type		0X000		L:L4		_Function_Sys_Init_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000048	No type		0X000		L:L2		_Function_Sys_Init_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000050	No type		0X000		L:L8		_Function_Sys_Init_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000053	No type		0X000		L:L6		_Function_Sys_Init_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00005B	No type		0X000		L:L12		_Function_Sys_Init_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00005E	No type		0X000		L:L10		_Function_Sys_Init_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000061	No type		0X000		L:L11		_Function_Sys_Init_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000061	No type		0X000		L:L7		_Function_Sys_Init_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000061	No type		0X000		L:L3		_Function_Sys_Init_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000061	No type		0X000		L:L1		_Function_Sys_Init_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000062	Section		0X022		L:_Function_Delayms_code		_Function_Delayms_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000062	No type		0X000		P:_Delayms		_Function_Delayms_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000064	No type		0X000		L:L15		_Function_Delayms_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000067	No type		0X000		L:L19		_Function_Delayms_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000067	No type		0X000		L:L20		_Function_Delayms_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000069	No type		0X000		L:L22		_Function_Delayms_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00006C	No type		0X000		L:L16		_Function_Delayms_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00006E	No type		0X000		L:L18		_Function_Delayms_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000072	No type		0X000		L:L14		_Function_Delayms_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000073	Section		0X02A		L:_Function_TimeDeal_code		_Function_TimeDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000073	No type		0X000		P:_TimeDeal		_Function_TimeDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00007A	No type		0X000		L:L26		_Function_TimeDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00007A	No type		0X000		L:L24		_Function_TimeDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000086	No type		0X000		L:L30		_Function_TimeDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000087	No type		0X000		L:L28		_Function_TimeDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000087	No type		0X000		L:L23		_Function_TimeDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000088	Section		0X02C		L:_Function_ZhiJDeal_code		_Function_ZhiJDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000088	No type		0X000		P:_ZhiJDeal		_Function_ZhiJDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00008B	No type		0X000		L:L33		_Function_ZhiJDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00008D	No type		0X000		L:L36		_Function_ZhiJDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00008F	No type		0X000		L:L38		_Function_ZhiJDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000095	No type		0X000		L:L40		_Function_ZhiJDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000098	No type		0X000		L:L42		_Function_ZhiJDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00009C	No type		0X000		L:L34		_Function_ZhiJDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00009D	No type		0X000		L:L35		_Function_ZhiJDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00009D	No type		0X000		L:L32		_Function_ZhiJDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00009E	Section		0X014		L:_Function_KeyeDeal_code		_Function_KeyeDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00009E	No type		0X000		P:_KeyeDeal		_Function_KeyeDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000A4	No type		0X000		L:L129		_Function_KeyeDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000A5	No type		0X000		L:L130		_Function_KeyeDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000A7	No type		0X000		L:L45		_Function_KeyeDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000A7	No type		0X000		L:L46		_Function_KeyeDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000A7	No type		0X000		L:L44		_Function_KeyeDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000A8	Section		0X1D4		L:_Function_AdccDeal_code		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000A8	No type		0X000		P:_AdccDeal		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000AB	No type		0X000		L:L48		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000B5	No type		0X000		L:L50		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000BE	No type		0X000		L:L54		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000C5	No type		0X000		L:L57		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000C8	No type		0X000		L:L59		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000C8	No type		0X000		L:L55		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000C9	No type		0X000		L:L56		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000D3	No type		0X000		L:L52		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000DD	No type		0X000		L:L61		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000E5	No type		0X000		L:L65		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000EC	No type		0X000		L:L68		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000EF	No type		0X000		L:L70		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000EF	No type		0X000		L:L66		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000F0	No type		0X000		L:L67		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0000FA	No type		0X000		L:L63		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000120	No type		0X000		L:L74		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00012B	No type		0X000		L:L78		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000136	No type		0X000		L:L82		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000141	No type		0X000		L:L86		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00014C	No type		0X000		L:L90		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000157	No type		0X000		L:L94		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000162	No type		0X000		L:L98		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00016D	No type		0X000		L:L102		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000178	No type		0X000		L:L106		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000183	No type		0X000		L:L110		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00018D	No type		0X000		L:L116		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00018D	No type		0X000		L:L114		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00018D	No type		0X000		L:L111		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00018D	No type		0X000		L:L107		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00018D	No type		0X000		L:L103		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00018D	No type		0X000		L:L99		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00018D	No type		0X000		L:L95		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00018D	No type		0X000		L:L91		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00018D	No type		0X000		L:L87		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00018D	No type		0X000		L:L83		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00018D	No type		0X000		L:L79		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00018D	No type		0X000		L:L75		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00018D	No type		0X000		L:L72		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000191	No type		0X000		L:L53		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000191	No type		0X000		L:L51		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000191	No type		0X000		L:L47		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000191	No type		0X000		L:L64		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000191	No type		0X000		L:L62		_Function_AdccDeal_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000192	No type		0X000		L:L118		_Function_main_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000192	No type		0X000		L:_main_end		_Function_main_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000192	Section		0X01A		L:_Function_main_code		_Function_main_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000192	No type		0X000		P:_main		_Function_main_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000193	No type		0X000		L:L119		_Function_main_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00019B	No type		0X000		L:L122		_Function_main_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00019E	No type		0X000		L:L123		_Function_main_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00019E	No type		0X000		L:L120		_Function_main_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00019F	Section		0X04A		L:_Function_ISR_isr_code		_Function_ISR_isr_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00019F	No type		0X000		P:_ISR_isr		_Function_ISR_isr_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0001B8	No type		0X000		L:L127		_Function_ISR_isr_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0001B8	No type		0X000		L:L125		_Function_ISR_isr_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0001B8	No type		0X000		L:L124		_Function_ISR_isr_code			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X0001C4	Section		0X00A		L:__DivUInt@RTL		__DivUInt@RTL			2divuint.o
+0X0001C4	No type		0X000		P:__ModUInt2Ram		__DivUInt@RTL			2divuint.o
+0X0001C6	No type		0X000		P:__DivUInt2Ram		__DivUInt@RTL			2divuint.o
+0X0001C7	No type		0X000		L:@ModDivLongParaArgArg		__DivUInt@RTL			2divuint.o
+0X0001C9	Section		0X022		L:__MulInt@RTL		__MulInt@RTL			2mulint.o
+0X0001C9	No type		0X000		P:__MulInt2Reg		__MulInt@RTL			2mulint.o
+0X0001CE	No type		0X000		L:@@doMulInt		__MulInt@RTL			2mulint.o
+0X0001D3	No type		0X000		L:@@ClrFc		__MulInt@RTL			2mulint.o
+0X0001D4	No type		0X000		L:@@doShiftRight		__MulInt@RTL			2mulint.o
+0X0001DA	Section		0X046		L:__Get2ByteParaToDest@RTL		__Get2ByteParaToDest@RTL			2get2bytepara.o
+0X0001DA	No type		0X000		P:__Get2ByteRamToLArg		__Get2ByteParaToDest@RTL			2get2bytepara.o
+0X0001E3	No type		0X000		P:__Get2ByteRomToLArg		__Get2ByteParaToDest@RTL			2get2bytepara.o
+0X0001EF	No type		0X000		P:__Get2ByteRamToRArg		__Get2ByteParaToDest@RTL			2get2bytepara.o
+0X0001F4	No type		0X000		P:__Get2ByteRomToRArg		__Get2ByteParaToDest@RTL			2get2bytepara.o
+0X0001F9	No type		0X000		L:@@Mov2ByteToRArg		__Get2ByteParaToDest@RTL			2get2bytepara.o
+0X0001FD	Section		0X060		L:__Get2BytePara@RTL		__Get2BytePara@RTL			2get2bytepara.o
+0X0001FD	No type		0X000		P:__Get2ByteRamRam		__Get2BytePara@RTL			2get2bytepara.o
+0X000203	No type		0X000		P:__Get2ByteRamRom		__Get2BytePara@RTL			2get2bytepara.o
+0X00020D	No type		0X000		P:__Get2ByteRomRam		__Get2BytePara@RTL			2get2bytepara.o
+0X000213	No type		0X000		P:__Get2ByteRomRom		__Get2BytePara@RTL			2get2bytepara.o
+0X00021D	No type		0X000		P:__Get2ByteRamCst		__Get2BytePara@RTL			2get2bytepara.o
+0X000222	No type		0X000		P:__Store2ByteLArg2HL		__Get2BytePara@RTL			2get2bytepara.o
+0X00022D	Section		0X050		L:__DivUIntKernel@RTL		__DivUIntKernel@RTL			2divuintkernel.o
+0X00022D	No type		0X000		P:__DivUIntKernel		__DivUIntKernel@RTL			2divuintkernel.o
+0X000238	No type		0X000		L:@@doNextCheck		__DivUIntKernel@RTL			2divuintkernel.o
+0X00023E	No type		0X000		L:@@doDivStart		__DivUIntKernel@RTL			2divuintkernel.o
+0X000241	No type		0X000		L:@@doNextBit		__DivUIntKernel@RTL			2divuintkernel.o
+0X00024C	No type		0X000		L:@@dec_num		__DivUIntKernel@RTL			2divuintkernel.o
+0X00024E	No type		0X000		L:@@Ret		__DivUIntKernel@RTL			2divuintkernel.o
+0X000254	No type		0X000		L:@@RetResult		__DivUIntKernel@RTL			2divuintkernel.o
+0X000255	Section		0X00E		L:__Mov2ByteRamToLArg@RTL		__Mov2ByteRamToLArg@RTL			2movramtolarg.o
+0X000255	No type		0X000		P:__Mov2ByteRamToLArg		__Mov2ByteRamToLArg@RTL			2movramtolarg.o
+0X00025C	Section		0X01E		L:__Mov4ByteRamToLArg@RTL		__Mov4ByteRamToLArg@RTL			2movramtolarg.o
+0X00025C	No type		0X000		P:__Mov4ByteRamToLArg		__Mov4ByteRamToLArg@RTL			2movramtolarg.o
+0X00026B	Section		0X00E		L:__Mov2ByteRamToRArg@RTL		__Mov2ByteRamToRArg@RTL			2movramtorarg.o
+0X00026B	No type		0X000		P:__Mov2ByteRamToRArg		__Mov2ByteRamToRArg@RTL			2movramtorarg.o
+0X000272	Section		0X014		L:__Mov4ByteRamToRArg@RTL		__Mov4ByteRamToRArg@RTL			2movramtorarg.o
+0X000272	No type		0X000		P:__Mov4ByteRamToRArg		__Mov4ByteRamToRArg@RTL			2movramtorarg.o
+
+
+Address		Type		Size(Byte)		Public/Local		Segment			Module
+0X000000	Section		0X005		L:crt0@data		crt0@data			C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o
+0X000000	Object		0X001		P:H		crt0@data			C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o
+0X000000	BitObject		0X001		P:_SDian_bz		_SDian_bz@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000001	Object		0X001		P:L		crt0@data			C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o
+0X000002	Object		0X001		P:X		crt0@data			C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o
+0X000003	Object		0X001		P:I		crt0@data			C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o
+0X000004	Object		0X001		P:T		crt0@data			C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o
+0X000005	Object		0X001		L:_bufT		_InterruptBackupData			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000005	Section		0X005		L:_InterruptBackupData		_InterruptBackupData			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000006	Object		0X001		L:_bufI		_InterruptBackupData			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000007	Object		0X001		L:_bufY		_InterruptBackupData			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000008	Object		0X001		L:_bufZ		_InterruptBackupData			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000009	Object		0X001		L:_bufR		_InterruptBackupData			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00000A	Object		0X001		L:W0		_VirtualReg			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00000A	Section		0X001		L:_VirtualReg		_VirtualReg			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00000B	Object		0X001		L:__SrcLArg0		__runtime_arg			2movramtorarg.o
+0X00000B	Section		0X00B		L:__runtime_arg		__runtime_arg			2movramtorarg.o
+0X00000B	Section		0X00B		L:__runtime_arg		__runtime_arg			2movramtolarg.o
+0X00000B	Section		0X00B		L:__runtime_arg		__runtime_arg			2get2bytepara.o
+0X00000B	Object		0X001		P:__SrcLArg0		__runtime_arg			2get2bytepara.o
+0X00000B	Object		0X001		L:__SrcLArg0		__runtime_arg			2movramtolarg.o
+0X00000B	Section		0X00B		L:__runtime_arg		__runtime_arg			2mulint.o
+0X00000B	Object		0X001		L:__SrcLArg0		__runtime_arg			2mulint.o
+0X00000B	Section		0X00B		L:__runtime_arg		__runtime_arg			2divuint.o
+0X00000B	Object		0X001		L:__SrcLArg0		__runtime_arg			2divuint.o
+0X00000B	Object		0X001		L:__SrcLArg0		__runtime_arg			2divuintkernel.o
+0X00000B	Section		0X00B		L:__runtime_arg		__runtime_arg			2divuintkernel.o
+0X00000C	Object		0X001		L:__SrcLArg1		__runtime_arg			2movramtolarg.o
+0X00000C	Object		0X001		L:__SrcLArg1		__runtime_arg			2divuintkernel.o
+0X00000C	Object		0X001		P:__SrcLArg1		__runtime_arg			2get2bytepara.o
+0X00000C	Object		0X001		L:__SrcLArg1		__runtime_arg			2mulint.o
+0X00000C	Object		0X001		L:__SrcLArg1		__runtime_arg			2movramtorarg.o
+0X00000C	Object		0X001		L:__SrcLArg1		__runtime_arg			2divuint.o
+0X00000D	Object		0X001		P:__SrcLArg2		__runtime_arg			2get2bytepara.o
+0X00000D	Object		0X001		L:__SrcLArg2		__runtime_arg			2movramtolarg.o
+0X00000D	Object		0X001		L:__SrcLArg2		__runtime_arg			2divuintkernel.o
+0X00000D	Object		0X001		L:__SrcLArg2		__runtime_arg			2divuint.o
+0X00000D	Object		0X001		L:__SrcLArg2		__runtime_arg			2mulint.o
+0X00000D	Object		0X001		L:__SrcLArg2		__runtime_arg			2movramtorarg.o
+0X00000E	Object		0X001		L:__SrcLArg3		__runtime_arg			2divuint.o
+0X00000E	Object		0X001		L:__SrcLArg3		__runtime_arg			2mulint.o
+0X00000E	Object		0X001		L:__SrcLArg3		__runtime_arg			2divuintkernel.o
+0X00000E	Object		0X001		L:__SrcLArg3		__runtime_arg			2movramtorarg.o
+0X00000E	Object		0X001		L:__SrcLArg3		__runtime_arg			2movramtolarg.o
+0X00000E	Object		0X001		P:__SrcLArg3		__runtime_arg			2get2bytepara.o
+0X00000F	Object		0X001		L:__SrcRArg0		__runtime_arg			2divuintkernel.o
+0X00000F	Object		0X001		P:__SrcRArg0		__runtime_arg			2get2bytepara.o
+0X00000F	Object		0X001		L:__SrcRArg0		__runtime_arg			2mulint.o
+0X00000F	Object		0X001		L:__SrcRArg0		__runtime_arg			2divuint.o
+0X00000F	Object		0X001		L:__SrcRArg0		__runtime_arg			2movramtorarg.o
+0X000010	Object		0X001		L:__SrcRArg1		__runtime_arg			2divuintkernel.o
+0X000010	Object		0X001		L:__SrcRArg1		__runtime_arg			2divuint.o
+0X000010	Object		0X001		L:__SrcRArg1		__runtime_arg			2mulint.o
+0X000010	Object		0X001		P:__SrcRArg1		__runtime_arg			2get2bytepara.o
+0X000010	Object		0X001		L:__SrcRArg1		__runtime_arg			2movramtorarg.o
+0X000011	Object		0X001		L:__SrcRArg2		__runtime_arg			2divuintkernel.o
+0X000011	Object		0X001		P:__SrcRArg2		__runtime_arg			2get2bytepara.o
+0X000011	Object		0X001		L:__SrcRArg2		__runtime_arg			2divuint.o
+0X000011	Object		0X001		L:__SrcRArg2		__runtime_arg			2mulint.o
+0X000011	Object		0X001		L:__SrcRArg2		__runtime_arg			2movramtorarg.o
+0X000012	Object		0X001		L:__SrcRArg3		__runtime_arg			2divuint.o
+0X000012	Object		0X001		L:__SrcRArg3		__runtime_arg			2mulint.o
+0X000012	Object		0X001		P:__SrcRArg3		__runtime_arg			2get2bytepara.o
+0X000012	Object		0X001		L:__SrcRArg3		__runtime_arg			2divuintkernel.o
+0X000012	Object		0X001		L:__SrcRArg3		__runtime_arg			2movramtorarg.o
+0X000013	Object		0X001		L:R0		__runtime_arg			2divuint.o
+0X000013	Object		0X001		L:R0		__runtime_arg			2get2bytepara.o
+0X000013	Object		0X001		L:R0		__runtime_arg			2divuintkernel.o
+0X000014	Object		0X001		L:R1		__runtime_arg			2get2bytepara.o
+0X000014	Object		0X001		L:R1		__runtime_arg			2divuint.o
+0X000014	Object		0X001		L:R1		__runtime_arg			2divuintkernel.o
+0X000015	Object		0X001		L:R2		__runtime_arg			2divuint.o
+0X000015	Object		0X001		L:R2		__runtime_arg			2divuintkernel.o
+0X000016	Section		0X001		L:_RS_Cnt@segment		_RS_Cnt@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000016	Object		0X001		P:_RS_Cnt		_RS_Cnt@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000017	Object		0X001		P:_RT_Cnt		_RT_Cnt@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000017	Section		0X001		L:_RT_Cnt@segment		_RT_Cnt@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000018	Section		0X001		L:_AD_value@segment		_AD_value@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000018	Object		0X001		P:_AD_value		_AD_value@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000019	Section		0X001		L:_AD_Cnt@segment		_AD_Cnt@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000019	Object		0X001		P:_AD_Cnt		_AD_Cnt@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00001A	Section		0X001		L:_JS1@segment		_JS1@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00001A	Object		0X001		P:_JS1		_JS1@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00001B	Section		0X001		L:_Funflag1@segment		_Funflag1@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00001B	Object		0X001		P:_Funflag1		_Funflag1@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00001C	Section		0X001		L:_Funflag0@segment		_Funflag0@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00001C	Object		0X001		P:_Funflag0		_Funflag0@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00001D	Section		0X001		L:_WorkGear@segment		_WorkGear@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00001D	Object		0X001		P:_WorkGear		_WorkGear@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00001E	Section		0X001		L:_WorkBuff@segment		_WorkBuff@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00001E	Object		0X001		P:_WorkBuff		_WorkBuff@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00001F	Section		0X001		L:_Worktime@segment		_Worktime@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00001F	Object		0X001		P:_Worktime		_Worktime@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000020	Section		0X001		L:_TimerCnt@segment		_TimerCnt@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000020	Object		0X001		P:_TimerCnt		_TimerCnt@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000021	Object		0X001		P:_Delayms_arg@0		_Function_Delayms_data			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000021	Section		0X000		L:_Function_KeyeDeal_data		_Function_KeyeDeal_data			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000021	Section		0X000		L:_Function_ISR_isr_data		_Function_ISR_isr_data			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000021	Section		0X000		L:_Function_TimeDeal_data		_Function_TimeDeal_data			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000021	Section		0X003		L:_Function_Delayms_data		_Function_Delayms_data			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000022	Object		0X001		L:_Delayms_data@0		_Function_Delayms_data			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000023	Object		0X001		L:_Delayms_data@1		_Function_Delayms_data			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000024	Section		0X000		L:_Function_main_data		_Function_main_data			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000024	Section		0X000		L:_Function_ZhiJDeal_data		_Function_ZhiJDeal_data			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000024	Section		0X000		L:_Function_AdccDeal_data		_Function_AdccDeal_data			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X000024	Section		0X000		L:_Function_Sys_Init_data		_Function_Sys_Init_data			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00002E	Section		0X001		L:_SDian_bz@segment		_SDian_bz@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00002F	Object		0X001		P:_SDian_Cnt		_SDian_Cnt@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0X00002F	Section		0X001		L:_SDian_Cnt@segment		_SDian_Cnt@segment			C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+
+
+Module Table [Unit:Word]
+
+Code Size	%Code Percent	Data Size	%Code Percent	Module Type	Module(Library)
+--------------------------------------------------------------------------------------------------------
+0x0000000A	0.980392		0x0000000B	22.916667		system lib 	2divuint.o(c_stdlib_100.lib)
+0x00000022	3.333333		0x0000000B	22.916667		system lib 	2mulint.o(c_stdlib_100.lib)
+0x00000030	4.705882		0x00000005	10.416667		crt0 code  	C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o
+0x00000356	83.725490		0x00000016	45.833333		user code  	C:\Users\zyb\Desktop\c_rc\Obj\rc.o
+0x00000050	7.843137		0x0000000B	22.916667		system lib 	2divuintkernel.o(c_stdlib_100.lib)
+0x0000002C	4.313725		0x0000000B	22.916667		system lib 	2movramtolarg.o(c_stdlib_100.lib)
+0x00000022	3.333333		0x0000000B	22.916667		system lib 	2movramtorarg.o(c_stdlib_100.lib)
+0x000000A6	16.274510		0x0000000B	22.916667		system lib 	2get2bytepara.o(c_stdlib_100.lib)
+--------------------------------------------------------------------------------------------------------
+
+Total ROM size: 1020[0x3FC]
+Has used: 635[0x27B](62.254902) words		[composed by: all code segments size]
+Remains: 385[0x181](37.745098) words
+
+Total RAM size: 48[0x30]
+Has used: 38[0x26](79.166667) words		[composed by: all code segments size]
+Remains: 10[0xA](20.833333) words
+
+Overlay Map:
+
+Call Tree:
+In File: "C:\Sonix\SN8_C_~1.297\C\LIB\crt0_SN8P2501B.o"
+
+In File: "C:\Users\zyb\Desktop\c_rc\Obj\rc.o"
+_Sys_Init ---> _ZhiJDeal
+_ZhiJDeal ---> _Delayms
+_AdccDeal ---> _Delayms
+_AdccDeal ---> __MulInt2Reg
+_AdccDeal ---> __DivUInt2Ram
+_main ---> _Sys_Init
+_main ---> _TimeDeal
+_main ---> _AdccDeal
+
+In File: "2divuint.o"
+__ModUInt2Ram ---> __DivUIntKernel
+__DivUInt2Ram ---> __DivUIntKernel
+
+In File: "2mulint.o"
+
+In File: "2get2bytepara.o"
+__Get2ByteRamToRArg ---> __Mov2ByteRamToRArg
+__Get2ByteRamRam ---> __Get2ByteRamToLArg
+__Get2ByteRamRam ---> __Mov2ByteRamToRArg
+__Get2ByteRamRom ---> __Get2ByteRamToLArg
+__Get2ByteRomRam ---> __Get2ByteRomToLArg
+__Get2ByteRomRam ---> __Mov2ByteRamToRArg
+__Get2ByteRomRom ---> __Get2ByteRomToLArg
+__Get2ByteRamCst ---> __Get2ByteRamToLArg
+
+In File: "2divuintkernel.o"
+
+In File: "2movramtolarg.o"
+
+In File: "2movramtorarg.o"
+__Mov4ByteRamToRArg ---> __Mov2ByteRamToRArg
+
+
+Detail CallTree
+
+Stack Level : Function Name
+0:_KeyeDeal
+0:_main
+1:		_Sys_Init
+2:				_ZhiJDeal
+3:						_Delayms
+1:		_TimeDeal
+1:		_AdccDeal
+2:				_Delayms
+2:				__MulInt2Reg
+2:				__DivUInt2Ram
+3:						__DivUIntKernel
+0:__Get2ByteRamCst
+1:		__Get2ByteRamToLArg
+0:__Mov4ByteRamToRArg
+1:		__Mov2ByteRamToRArg
+1:_ISR_isr
+
+
+Optimize result:
+The "_SELECTBANK" instruction total number:0
+After optimize,erased "_SELECTBANK" instruction number:0
+Optimize percent with "_SELECTBANK" instruction:0%
+
+
+
+Entry point = 0x00000192
+

@@ -1,0 +1,840 @@
+start listing elf file - .\Bin/c_rc.out
+
+
+------------------begin data section------------------
+
+Start   Length(Byte)  Type  Name                             Source File
+000000    0X05        Data  crt0@data                        
+0X0005    0X05        Data  _InterruptBackupData             
+0X000A    0X01        Data  _VirtualReg                      
+0X000B    0X0B        Data  __runtime_arg                    
+0X0016    0X01        Data  _RS_Cnt@segment                  
+0X0017    0X01        Data  _RT_Cnt@segment                  
+0X0018    0X01        Data  _AD_value@segment                
+0X0019    0X01        Data  _AD_Cnt@segment                  
+0X001A    0X01        Data  _JS1@segment                     
+0X001B    0X01        Data  _Funflag1@segment                
+0X001C    0X01        Data  _Funflag0@segment                
+0X001D    0X01        Data  _WorkGear@segment                
+0X001E    0X01        Data  _WorkBuff@segment                
+0X001F    0X01        Data  _Worktime@segment                
+0X0020    0X01        Data  _TimerCnt@segment                
+0X0021    0X03        Data  _Function_Delayms_data           
+0X002E    0X01        Data  _SDian_bz@segment                
+0X002F    0X01        Data  _SDian_Cnt@segment               
+
+
+crt0@data SEGMENT DATA INBANK
+	H	DS	1
+	L	DS	1
+	X	DS	1
+	I	DS	1
+	T	DS	1
+
+_InterruptBackupData SEGMENT DATA INBANK
+	_bufT	DS	1
+	_bufI	DS	1
+	_bufY	DS	1
+	_bufZ	DS	1
+	_bufR	DS	1
+
+_VirtualReg SEGMENT DATA INBANK
+	W0	DS	1
+
+__runtime_arg SEGMENT DATA INBANK
+	__SrcLArg0	DS	1
+	__SrcLArg1	DS	1
+	__SrcLArg2	DS	1
+	__SrcLArg3	DS	1
+	__SrcRArg0	DS	1
+	__SrcRArg1	DS	1
+	__SrcRArg2	DS	1
+	__SrcRArg3	DS	1
+	R0	DS	1
+	R1	DS	1
+	R2	DS	1
+
+_RS_Cnt@segment SEGMENT DATA INBANK
+	_RS_Cnt	DS	1
+
+_RT_Cnt@segment SEGMENT DATA INBANK
+	_RT_Cnt	DS	1
+
+_AD_value@segment SEGMENT DATA INBANK
+	_AD_value	DS	1
+
+_AD_Cnt@segment SEGMENT DATA INBANK
+	_AD_Cnt	DS	1
+
+_JS1@segment SEGMENT DATA INBANK
+	_JS1	DS	1
+
+_Funflag1@segment SEGMENT DATA INBANK
+	_Funflag1	DS	1
+
+_Funflag0@segment SEGMENT DATA INBANK
+	_Funflag0	DS	1
+
+_WorkGear@segment SEGMENT DATA INBANK
+	_WorkGear	DS	1
+
+_WorkBuff@segment SEGMENT DATA INBANK
+	_WorkBuff	DS	1
+
+_Worktime@segment SEGMENT DATA INBANK
+	_Worktime	DS	1
+
+_TimerCnt@segment SEGMENT DATA INBANK
+	_TimerCnt	DS	1
+
+_Function_Delayms_data SEGMENT DATA INBANK
+	_Delayms_arg@0	DS	1
+	_Delayms_data@0	DS	1
+	_Delayms_data@1	DS	1
+
+_SDian_bz@segment SEGMENT DATA INBANK
+	_SDian_bz	DSBIT	1
+
+_SDian_Cnt@segment SEGMENT DATA INBANK
+	_SDian_Cnt	DS	1
+
+
+------------------begin disassembly code------------------
+
+    0: 800A       	JMP 0x000A
+    1: 0000       	NOP
+    2: 0000       	NOP
+    3: 0000       	NOP
+    4: 0000       	NOP
+    5: 0000       	NOP
+    6: 0000       	NOP
+    7: 0000       	NOP
+_interrupt@_ISR_isr:
+    8: 819F       	JMP 0x019F
+.CODE:
+    9: F9F9       	CALL 0x39F9
+_SGV_INIT_CODE_BEGIN:
+    A: 2D7F       	MOV A, #7fh
+    B: 2FDF       	B0MOV STKP, A
+    C: C010       	CALL 0x0010
+    D: C013       	CALL 0x0013
+_SGV_INIT_CODE:
+    E: C010       	CALL 0x0010
+_SGV_INIT_CODE:
+    E: C010       	CALL 0x0010
+    F: 8192       	JMP 0x0192
+__ClearWatchDogTimer:
+   10: 2D5A       	MOV A, #5ah
+   11: 2FCC       	B0MOV WDTR, A
+   12: 0E00       	RET
+__ClrRAM:
+   13: 2B84       	CLR 0x84
+   14: 332F       	B0MOV 0x83, #2Fh
+ClrRAM10:
+   15: 2BE7       	CLR 0xE7
+   16: 2683       	DECMS 0x83
+   17: 8015       	JMP 0x0015
+   18: 2BE7       	CLR 0xE7
+   19: 0E00       	RET
+_Function_Sys_Init_code:
+   1A: 2BCA       	CLR 0xCA
+   1B: 2BC9       	CLR 0xC9
+   1C: 2BC8       	CLR 0xC8
+   1D: 2DFF       	MOV A, #ffh
+   1E: 2FB8       	B0MOV P0M, A
+   1F: 2FC2       	B0MOV P2M, A
+   20: 2DF1       	MOV A, #f1h
+   21: 2FC1       	B0MOV P1M, A
+   22: 2DFF       	MOV A, #ffh
+   23: 2FC5       	B0MOV P5M, A
+   24: 2BE0       	CLR 0xE0
+   25: 2BE2       	CLR 0xE2
+   26: 2D0C       	MOV A, #0ch
+   27: 2FE1       	B0MOV P1UR, A
+   28: 2BE5       	CLR 0xE5
+   29: 6AD1       	B0BSET 0xD1.2
+   2A: 6BD1       	B0BSET 0xD1.3
+   2B: 6CD5       	B0BSET 0xD5.4
+   2C: 2D10       	MOV A, #10h
+   2D: 2FD8       	B0MOV T0M, A
+   2E: 2BD9       	CLR 0xD9
+   2F: 6CC9       	B0BSET 0xC9.4
+   30: 2D40       	MOV A, #40h
+   31: 2FDA       	B0MOV TC0M, A
+   32: 2D06       	MOV A, #06h
+   33: 2FCD       	B0MOV TC0R, A
+   34: 2FDB       	B0MOV TC0C, A
+   35: 6ADA       	B0BSET TC0M.2
+   36: 6DC9       	B0BSET INTEN.5
+   37: 6FDA       	B0BSET TC0M.7
+   38: 6FDF       	B0BSET STKP.7
+   39: C088       	CALL 0x0088
+   3A: 2D64       	MOV A, #64h
+   3B: 1F1F       	MOV 0x1F, A
+   3C: 2B1E       	CLR 0x1E
+   3D: 1E2F       	MOV A, 0x2F
+   3E: 0602       	CMPRS A, #02h
+   3F: 8048       	JMP 0x0048
+   40: 582E       	BTS1 0x2E.0
+   41: 8045       	JMP 0x0045
+   42: 2D02       	MOV A, #02h
+   43: 1F2F       	MOV 0x2F, A
+   44: 8061       	JMP 0x0061
+L4:
+   45: 2D01       	MOV A, #01h
+   46: 1F2F       	MOV 0x2F, A
+   47: 8061       	JMP 0x0061
+L2:
+   48: 1E2F       	MOV A, 0x2F
+   49: 0603       	CMPRS A, #03h
+   4A: 8053       	JMP 0x0053
+   4B: 582E       	BTS1 0x2E.0
+   4C: 8050       	JMP 0x0050
+   4D: 2D03       	MOV A, #03h
+   4E: 1F2F       	MOV 0x2F, A
+   4F: 8061       	JMP 0x0061
+L8:
+   50: 2D01       	MOV A, #01h
+   51: 1F2F       	MOV 0x2F, A
+   52: 8061       	JMP 0x0061
+L6:
+   53: 1E2F       	MOV A, 0x2F
+   54: 0604       	CMPRS A, #04h
+   55: 805E       	JMP 0x005E
+   56: 582E       	BTS1 0x2E.0
+   57: 805B       	JMP 0x005B
+   58: 2D04       	MOV A, #04h
+   59: 1F2F       	MOV 0x2F, A
+   5A: 8061       	JMP 0x0061
+L12:
+   5B: 2D01       	MOV A, #01h
+   5C: 1F2F       	MOV 0x2F, A
+   5D: 8061       	JMP 0x0061
+L10:
+   5E: 2D01       	MOV A, #01h
+   5F: 1F2F       	MOV 0x2F, A
+   60: 482E       	BSET 0x2E.0
+L11:
+   61: 0E00       	RET
+_Function_Delayms_code:
+   62: 2B22       	CLR 0x22
+   63: 806E       	JMP 0x006E
+L15:
+   64: 2D64       	MOV A, #64h
+   65: 1F23       	MOV 0x23, A
+   66: 8069       	JMP 0x0069
+L19:
+   67: 2623       	DECMS 0x23
+   68: 0000       	NOP
+L22:
+   69: 1E23       	MOV A, 0x23
+   6A: 0600       	CMPRS A, #00h
+   6B: 8067       	JMP 0x0067
+L16:
+   6C: 1622       	INCMS 0x22
+   6D: 0000       	NOP
+L18:
+   6E: 1E22       	MOV A, 0x22
+   6F: 2221       	SUB A, 0x21
+   70: 7A86       	B0BTS1 0x86.2
+   71: 8064       	JMP 0x0064
+L14:
+   72: 0E00       	RET
+_Function_TimeDeal_code:
+   73: 1E1E       	MOV A, 0x1E
+   74: 2428       	SUB A, #28h
+   75: 7A86       	B0BTS1 0x86.2
+   76: 807A       	JMP 0x007A
+   77: 591B       	BTS1 0x1B.1
+   78: 807A       	JMP 0x007A
+   79: 4A1B       	BSET 0x1B.2
+L26:
+   7A: 1E1E       	MOV A, 0x1E
+   7B: 221F       	SUB A, 0x1F
+   7C: 7A86       	B0BTS1 0x86.2
+   7D: 8087       	JMP 0x0087
+   7E: 162F       	INCMS 0x2F
+   7F: 0000       	NOP
+   80: 1E2F       	MOV A, 0x2F
+   81: 2404       	SUB A, #04h
+   82: 7A86       	B0BTS1 0x86.2
+   83: 8086       	JMP 0x0086
+   84: 2D04       	MOV A, #04h
+   85: 1F2F       	MOV 0x2F, A
+L30:
+   86: 4A1B       	BSET 0x1B.2
+L28:
+   87: 0E00       	RET
+_Function_ZhiJDeal_code:
+   88: 2D01       	MOV A, #01h
+   89: 1F21       	MOV 0x21, A
+   8A: C062       	CALL 0x0062
+L33:
+   8B: 7AD1       	B0BTS1 0xD1.2
+   8C: 808D       	JMP 0x008D
+L36:
+   8D: 7BD1       	B0BTS1 0xD1.3
+   8E: 808F       	JMP 0x008F
+L38:
+   8F: 2D01       	MOV A, #01h
+   90: 1F21       	MOV 0x21, A
+   91: C062       	CALL 0x0062
+   92: 7AD1       	B0BTS1 0xD1.2
+   93: 8095       	JMP 0x0095
+   94: 809D       	JMP 0x009D
+L40:
+   95: 7BD1       	B0BTS1 0xD1.3
+   96: 8098       	JMP 0x0098
+   97: 809D       	JMP 0x009D
+L42:
+   98: 4F1C       	BSET 0x1C.7
+   99: 6AC1       	B0BSET 0xC1.2
+   9A: 6BC1       	B0BSET 0xC1.3
+   9B: 809D       	JMP 0x009D
+L34:
+   9C: 808B       	JMP 0x008B
+L35:
+   9D: 0E00       	RET
+_Function_KeyeDeal_code:
+   9E: 551C       	BTS0 0x1C.5
+   9F: 80A4       	JMP 0x00A4
+   A0: 501B       	BTS0 0x1B.0
+   A1: 80A4       	JMP 0x00A4
+   A2: 4702       	BCLR 0x02.7
+   A3: 80A5       	JMP 0x00A5
+L129:
+   A4: 4F02       	BSET 0x02.7
+L130:
+   A5: 5F02       	BTS1 0x02.7
+   A6: 80A7       	JMP 0x00A7
+L45:
+   A7: 0E00       	RET
+_Function_AdccDeal_code:
+   A8: 591B       	BTS1 0x1B.1
+   A9: 80AB       	JMP 0x00AB
+   AA: 8191       	JMP 0x0191
+L48:
+   AB: 511C       	BTS0 0x1C.1
+   AC: 80B5       	JMP 0x00B5
+   AD: 491C       	BSET 0x1C.1
+   AE: 60B8       	B0BCLR 0xB8.0
+   AF: 68C1       	B0BSET 0xC1.0
+   B0: 60D1       	B0BCLR 0xD1.0
+   B1: 2D02       	MOV A, #02h
+   B2: 1F21       	MOV 0x21, A
+   B3: C062       	CALL 0x0062
+   B4: 8191       	JMP 0x0191
+L50:
+   B5: 521C       	BTS0 0x1C.2
+   B6: 80D3       	JMP 0x00D3
+   B7: 2BD9       	CLR 0xD9
+   B8: 60C1       	B0BCLR 0xC1.0
+   B9: 68B8       	B0BSET 0xB8.0
+   BA: 68D0       	B0BSET 0xD0.0
+   BB: 6FD8       	B0BSET 0xD8.7
+   BC: 0000       	NOP
+   BD: 0000       	NOP
+L54:
+   BE: 2D5A       	MOV A, #5ah
+   BF: 2FCC       	B0MOV WDTR, A
+   C0: 1E1A       	MOV A, 0x1A
+   C1: 0614       	CMPRS A, #14h
+   C2: 7A86       	B0BTS1 0x86.2
+   C3: 80C5       	JMP 0x00C5
+   C4: 80C9       	JMP 0x00C9
+L57:
+   C5: 78D1       	B0BTS1 0xD1.0
+   C6: 80C8       	JMP 0x00C8
+   C7: 80C9       	JMP 0x00C9
+L59:
+   C8: 80BE       	JMP 0x00BE
+L56:
+   C9: 67D8       	B0BCLR 0xD8.7
+   CA: 2ED9       	B0MOV A, T0C
+   CB: 1316       	ADD 0x16, A
+   CC: 2BD9       	CLR 0xD9
+   CD: 2B1A       	CLR 0x1A
+   CE: 60B8       	B0BCLR 0xB8.0
+   CF: 68C1       	B0BSET 0xC1.0
+   D0: 60D1       	B0BCLR 0xD1.0
+   D1: 4A1C       	BSET 0x1C.2
+   D2: 8191       	JMP 0x0191
+L52:
+   D3: 531C       	BTS0 0x1C.3
+   D4: 80DD       	JMP 0x00DD
+   D5: 4B1C       	BSET 0x1C.3
+   D6: 60B8       	B0BCLR 0xB8.0
+   D7: 68C1       	B0BSET 0xC1.0
+   D8: 60D1       	B0BCLR 0xD1.0
+   D9: 2D02       	MOV A, #02h
+   DA: 1F21       	MOV 0x21, A
+   DB: C062       	CALL 0x0062
+   DC: 8191       	JMP 0x0191
+L61:
+   DD: 541C       	BTS0 0x1C.4
+   DE: 80FA       	JMP 0x00FA
+   DF: 2BD9       	CLR 0xD9
+   E0: 60C1       	B0BCLR 0xC1.0
+   E1: 60B8       	B0BCLR 0xB8.0
+   E2: 6FD8       	B0BSET 0xD8.7
+   E3: 0000       	NOP
+   E4: 0000       	NOP
+L65:
+   E5: 2D5A       	MOV A, #5ah
+   E6: 2FCC       	B0MOV WDTR, A
+   E7: 1E1A       	MOV A, 0x1A
+   E8: 0614       	CMPRS A, #14h
+   E9: 7A86       	B0BTS1 0x86.2
+   EA: 80EC       	JMP 0x00EC
+   EB: 80F0       	JMP 0x00F0
+L68:
+   EC: 78D1       	B0BTS1 0xD1.0
+   ED: 80EF       	JMP 0x00EF
+   EE: 80F0       	JMP 0x00F0
+L70:
+   EF: 80E5       	JMP 0x00E5
+L67:
+   F0: 67D8       	B0BCLR 0xD8.7
+   F1: 2ED9       	B0MOV A, T0C
+   F2: 1317       	ADD 0x17, A
+   F3: 2B1A       	CLR 0x1A
+   F4: 2BD9       	CLR 0xD9
+   F5: 60B8       	B0BCLR 0xB8.0
+   F6: 68C1       	B0BSET 0xC1.0
+   F7: 60D1       	B0BCLR 0xD1.0
+   F8: 4C1C       	BSET 0x1C.4
+   F9: 8191       	JMP 0x0191
+L63:
+   FA: 1619       	INCMS 0x19
+   FB: 0000       	NOP
+   FC: 1E19       	MOV A, 0x19
+   FD: 0608       	CMPRS A, #08h
+   FE: 818D       	JMP 0x018D
+   FF: 2B19       	CLR 0x19
+  100: 0917       	RRCM 0x17
+  101: 0917       	RRCM 0x17
+  102: 0917       	RRCM 0x17
+  103: 2D1F       	MOV A, #1fh
+  104: 2917       	AND 0x17, A
+  105: 0916       	RRCM 0x16
+  106: 0916       	RRCM 0x16
+  107: 0916       	RRCM 0x16
+  108: 2916       	AND 0x16, A
+  109: 2DE6       	MOV A, #e6h
+  10A: 2F01       	B0MOV 0x01, A
+  10B: 1E16       	MOV A, 0x16
+  10C: C1C9       	CALL 0x01C9
+  10D: 1F0B       	MOV 0x0B, A
+  10E: 1E17       	MOV A, 0x17
+  10F: 1F0F       	MOV 0x0F, A
+  110: 2D00       	MOV A, #00h
+  111: 2F00       	B0MOV 0x00, A
+  112: 2D18       	MOV A, #18h
+  113: 2F01       	B0MOV 0x01, A
+  114: C1C6       	CALL 0x01C6
+  115: 1E18       	MOV A, 0x18
+  116: 24E3       	SUB A, #e3h
+  117: 7A86       	B0BTS1 0x86.2
+  118: 8120       	JMP 0x0120
+  119: 2D01       	MOV A, #01h
+  11A: 1F1D       	MOV 0x1D, A
+  11B: 5F1C       	BTS1 0x1C.7
+  11C: 818D       	JMP 0x018D
+  11D: 6BD1       	B0BSET 0xD1.3
+  11E: 6AD1       	B0BSET 0xD1.2
+  11F: 818D       	JMP 0x018D
+L74:
+  120: 1E18       	MOV A, 0x18
+  121: 24CE       	SUB A, #ceh
+  122: 7A86       	B0BTS1 0x86.2
+  123: 812B       	JMP 0x012B
+  124: 2D02       	MOV A, #02h
+  125: 1F1D       	MOV 0x1D, A
+  126: 5F1C       	BTS1 0x1C.7
+  127: 818D       	JMP 0x018D
+  128: 6BD1       	B0BSET 0xD1.3
+  129: 62D1       	B0BCLR 0xD1.2
+  12A: 818D       	JMP 0x018D
+L78:
+  12B: 1E18       	MOV A, 0x18
+  12C: 24AD       	SUB A, #adh
+  12D: 7A86       	B0BTS1 0x86.2
+  12E: 8136       	JMP 0x0136
+  12F: 2D03       	MOV A, #03h
+  130: 1F1D       	MOV 0x1D, A
+  131: 5F1C       	BTS1 0x1C.7
+  132: 818D       	JMP 0x018D
+  133: 63D1       	B0BCLR 0xD1.3
+  134: 62D1       	B0BCLR 0xD1.2
+  135: 818D       	JMP 0x018D
+L82:
+  136: 1E18       	MOV A, 0x18
+  137: 249B       	SUB A, #9bh
+  138: 7A86       	B0BTS1 0x86.2
+  139: 8141       	JMP 0x0141
+  13A: 2D04       	MOV A, #04h
+  13B: 1F1D       	MOV 0x1D, A
+  13C: 5F1C       	BTS1 0x1C.7
+  13D: 818D       	JMP 0x018D
+  13E: 6BD1       	B0BSET 0xD1.3
+  13F: 6AD1       	B0BSET 0xD1.2
+  140: 818D       	JMP 0x018D
+L86:
+  141: 1E18       	MOV A, 0x18
+  142: 247D       	SUB A, #7dh
+  143: 7A86       	B0BTS1 0x86.2
+  144: 814C       	JMP 0x014C
+  145: 2D05       	MOV A, #05h
+  146: 1F1D       	MOV 0x1D, A
+  147: 5F1C       	BTS1 0x1C.7
+  148: 818D       	JMP 0x018D
+  149: 6BD1       	B0BSET 0xD1.3
+  14A: 62D1       	B0BCLR 0xD1.2
+  14B: 818D       	JMP 0x018D
+L90:
+  14C: 1E18       	MOV A, 0x18
+  14D: 2467       	SUB A, #67h
+  14E: 7A86       	B0BTS1 0x86.2
+  14F: 8157       	JMP 0x0157
+  150: 2D06       	MOV A, #06h
+  151: 1F1D       	MOV 0x1D, A
+  152: 5F1C       	BTS1 0x1C.7
+  153: 818D       	JMP 0x018D
+  154: 63D1       	B0BCLR 0xD1.3
+  155: 62D1       	B0BCLR 0xD1.2
+  156: 818D       	JMP 0x018D
+L94:
+  157: 1E18       	MOV A, 0x18
+  158: 244B       	SUB A, #4bh
+  159: 7A86       	B0BTS1 0x86.2
+  15A: 8162       	JMP 0x0162
+  15B: 2D07       	MOV A, #07h
+  15C: 1F1D       	MOV 0x1D, A
+  15D: 5F1C       	BTS1 0x1C.7
+  15E: 818D       	JMP 0x018D
+  15F: 6BD1       	B0BSET 0xD1.3
+  160: 6AD1       	B0BSET 0xD1.2
+  161: 818D       	JMP 0x018D
+L98:
+  162: 1E18       	MOV A, 0x18
+  163: 2438       	SUB A, #38h
+  164: 7A86       	B0BTS1 0x86.2
+  165: 816D       	JMP 0x016D
+  166: 2D08       	MOV A, #08h
+  167: 1F1D       	MOV 0x1D, A
+  168: 5F1C       	BTS1 0x1C.7
+  169: 818D       	JMP 0x018D
+  16A: 6BD1       	B0BSET 0xD1.3
+  16B: 62D1       	B0BCLR 0xD1.2
+  16C: 818D       	JMP 0x018D
+L102:
+  16D: 1E18       	MOV A, 0x18
+  16E: 2416       	SUB A, #16h
+  16F: 7A86       	B0BTS1 0x86.2
+  170: 8178       	JMP 0x0178
+  171: 2D09       	MOV A, #09h
+  172: 1F1D       	MOV 0x1D, A
+  173: 5F1C       	BTS1 0x1C.7
+  174: 818D       	JMP 0x018D
+  175: 63D1       	B0BCLR 0xD1.3
+  176: 62D1       	B0BCLR 0xD1.2
+  177: 818D       	JMP 0x018D
+L106:
+  178: 1E18       	MOV A, 0x18
+  179: 2405       	SUB A, #05h
+  17A: 7A86       	B0BTS1 0x86.2
+  17B: 8183       	JMP 0x0183
+  17C: 2D0A       	MOV A, #0ah
+  17D: 1F1D       	MOV 0x1D, A
+  17E: 5F1C       	BTS1 0x1C.7
+  17F: 818D       	JMP 0x018D
+  180: 6BD1       	B0BSET 0xD1.3
+  181: 6AD1       	B0BSET 0xD1.2
+  182: 818D       	JMP 0x018D
+L110:
+  183: 1E18       	MOV A, 0x18
+  184: 2405       	SUB A, #05h
+  185: 7286       	B0BTS0 0x86.2
+  186: 818D       	JMP 0x018D
+  187: 2D0B       	MOV A, #0bh
+  188: 1F1D       	MOV 0x1D, A
+  189: 5F1C       	BTS1 0x1C.7
+  18A: 818D       	JMP 0x018D
+  18B: 6BD1       	B0BSET 0xD1.3
+  18C: 62D1       	B0BCLR 0xD1.2
+L116:
+  18D: 411C       	BCLR 0x1C.1
+  18E: 421C       	BCLR 0x1C.2
+  18F: 431C       	BCLR 0x1C.3
+  190: 441C       	BCLR 0x1C.4
+L64:
+  191: 0E00       	RET
+_Function_main_code:
+  192: C01A       	CALL 0x001A
+L119:
+  193: 2D5A       	MOV A, #5ah
+  194: 2FCC       	B0MOV WDTR, A
+  195: 5A1B       	BTS1 0x1B.2
+  196: 819B       	JMP 0x019B
+  197: 64D5       	B0BCLR P5.4
+  198: 6BD1       	B0BSET P1.3
+  199: 6AD1       	B0BSET P1.2
+  19A: 819E       	JMP 0x019E
+L122:
+  19B: C073       	CALL 0x0073
+  19C: C0A8       	CALL 0x00A8
+  19D: 6CD5       	B0BSET P5.4
+L123:
+  19E: 8193       	JMP 0x0193
+_Function_ISR_isr_code:
+  19F: 0400       	PUSH
+  1A0: 2E84       	B0MOV A, Y
+  1A1: 2F07       	B0MOV 0x07, A
+  1A2: 2E83       	B0MOV A, Z
+  1A3: 2F08       	B0MOV 0x08, A
+  1A4: 2E82       	B0MOV A, R
+  1A5: 2F09       	B0MOV 0x09, A
+  1A6: 2E04       	B0MOV A, 0x04
+  1A7: 2F05       	B0MOV 0x05, A
+  1A8: 2E03       	B0MOV A, 0x03
+  1A9: 2F06       	B0MOV 0x06, A
+  1AA: 7DC8       	B0BTS1 INTRQ.5
+  1AB: 81B8       	JMP 0x01B8
+  1AC: 65C8       	B0BCLR INTRQ.5
+  1AD: 161A       	INCMS 0x1A
+  1AE: 0000       	NOP
+  1AF: 1620       	INCMS 0x20
+  1B0: 0000       	NOP
+  1B1: 1E20       	MOV A, 0x20
+  1B2: 06F9       	CMPRS A, #F9h
+  1B3: 7A86       	B0BTS1 0x86.2
+  1B4: 81B8       	JMP 0x01B8
+  1B5: 2B20       	CLR 0x20
+  1B6: 161E       	INCMS 0x1E
+  1B7: 0000       	NOP
+L127:
+  1B8: 2E05       	B0MOV A, 0x05
+  1B9: 2F04       	B0MOV 0x04, A
+  1BA: 2E06       	B0MOV A, 0x06
+  1BB: 2F03       	B0MOV 0x03, A
+  1BC: 2E07       	B0MOV A, 0x07
+  1BD: 2F84       	B0MOV Y, A
+  1BE: 2E08       	B0MOV A, 0x08
+  1BF: 2F83       	B0MOV Z, A
+  1C0: 2E09       	B0MOV A, 0x09
+  1C1: 2F82       	B0MOV R, A
+  1C2: 0500       	POP
+  1C3: 0F00       	RETI
+__DivUInt@RTL:
+  1C4: 6815       	B0BSET 0x15.0
+  1C5: 81C7       	JMP 0x01C7
+__DivUInt2Ram:
+  1C6: 6015       	B0BCLR 0x15.0
+@ModDivLongParaArgArg:
+  1C7: C22D       	CALL 0x022D
+  1C8: 0E00       	RET
+__MulInt@RTL:
+  1C9: 2F0F       	B0MOV 0x0F, A
+  1CA: 2E01       	B0MOV A, 0x01
+  1CB: 2F0B       	B0MOV 0x0B, A
+  1CC: 3300       	B0MOV 0x83, #00h
+  1CD: 3208       	B0MOV 0x82, #08h
+@@doMulInt:
+  1CE: 780B       	B0BTS1 0x0B.0
+  1CF: 81D3       	JMP 0x01D3
+  1D0: 2E0F       	B0MOV A, 0x0F
+  1D1: 1383       	ADD 0x83, A
+  1D2: 81D4       	JMP 0x01D4
+@@ClrFc:
+  1D3: 6286       	B0BCLR 0x86.2
+@@doShiftRight:
+  1D4: 0983       	RRCM 0x83
+  1D5: 090B       	RRCM 0x0B
+  1D6: 2682       	DECMS 0x82
+  1D7: 81CE       	JMP 0x01CE
+  1D8: 2E0B       	B0MOV A, 0x0B
+  1D9: 0E00       	RET
+__Get2ByteParaToDest@RTL:
+  1DA: 2F02       	B0MOV 0x02, A
+  1DB: 2EE7       	B0MOV A, @YZ
+  1DC: 2F0B       	B0MOV 0x0B, A
+  1DD: 1683       	INCMS 0x83
+  1DE: 0000       	NOP
+  1DF: 2EE7       	B0MOV A, @YZ
+  1E0: 2F0C       	B0MOV 0x0C, A
+  1E1: 2E02       	B0MOV A, 0x02
+  1E2: 0E00       	RET
+__Get2ByteRomToLArg:
+  1E3: 2F13       	B0MOV 0x13, A
+  1E4: 2E82       	B0MOV A, R
+  1E5: 2F14       	B0MOV 0x14, A
+  1E6: 2B02       	CLR 0x02
+  1E7: 0D00       	MOVC
+  1E8: 2F0B       	B0MOV 0x0B, A
+  1E9: 2E82       	B0MOV A, R
+  1EA: 2F0C       	B0MOV 0x0C, A
+  1EB: 2E14       	B0MOV A, 0x14
+  1EC: 2F82       	B0MOV R, A
+  1ED: 2E13       	B0MOV A, 0x13
+  1EE: 0E00       	RET
+__Get2ByteRamToRArg:
+  1EF: 2F83       	B0MOV Z, A
+  1F0: 2E82       	B0MOV A, R
+  1F1: 2F84       	B0MOV Y, A
+  1F2: C26B       	CALL 0x026B
+  1F3: 0E00       	RET
+__Get2ByteRomToRArg:
+  1F4: 2F83       	B0MOV Z, A
+  1F5: 2E82       	B0MOV A, R
+  1F6: 2F84       	B0MOV Y, A
+  1F7: 2B02       	CLR 0x02
+  1F8: 0D00       	MOVC
+@@Mov2ByteToRArg:
+  1F9: 2F0F       	B0MOV 0x0F, A
+  1FA: 2E82       	B0MOV A, R
+  1FB: 2F10       	B0MOV 0x10, A
+  1FC: 0E00       	RET
+__Get2BytePara@RTL:
+  1FD: C1DA       	CALL 0x01DA
+  1FE: 2F83       	B0MOV Z, A
+  1FF: 2E82       	B0MOV A, R
+  200: 2F84       	B0MOV Y, A
+  201: C26B       	CALL 0x026B
+  202: 0E00       	RET
+__Get2ByteRamRom:
+  203: C1DA       	CALL 0x01DA
+  204: 2F83       	B0MOV Z, A
+  205: 2E82       	B0MOV A, R
+  206: 2F84       	B0MOV Y, A
+  207: 2B02       	CLR 0x02
+  208: 0D00       	MOVC
+  209: 2F0F       	B0MOV 0x0F, A
+  20A: 2E82       	B0MOV A, R
+  20B: 2F10       	B0MOV 0x10, A
+  20C: 0E00       	RET
+__Get2ByteRomRam:
+  20D: C1E3       	CALL 0x01E3
+  20E: 2F83       	B0MOV Z, A
+  20F: 2E82       	B0MOV A, R
+  210: 2F84       	B0MOV Y, A
+  211: C26B       	CALL 0x026B
+  212: 0E00       	RET
+__Get2ByteRomRom:
+  213: C1E3       	CALL 0x01E3
+  214: 2F83       	B0MOV Z, A
+  215: 2E82       	B0MOV A, R
+  216: 2F84       	B0MOV Y, A
+  217: 2B02       	CLR 0x02
+  218: 0D00       	MOVC
+  219: 2F0F       	B0MOV 0x0F, A
+  21A: 2E82       	B0MOV A, R
+  21B: 2F10       	B0MOV 0x10, A
+  21C: 0E00       	RET
+__Get2ByteRamCst:
+  21D: C1DA       	CALL 0x01DA
+  21E: 2F0F       	B0MOV 0x0F, A
+  21F: 2E82       	B0MOV A, R
+  220: 2F10       	B0MOV 0x10, A
+  221: 0E00       	RET
+__Store2ByteLArg2HL:
+  222: 2E01       	B0MOV A, 0x01
+  223: 2F83       	B0MOV Z, A
+  224: 2E00       	B0MOV A, 0x00
+  225: 2F84       	B0MOV Y, A
+  226: 2E0B       	B0MOV A, 0x0B
+  227: 2FE7       	B0MOV @YZ, A
+  228: 1683       	INCMS 0x83
+  229: 0000       	NOP
+  22A: 2E0C       	B0MOV A, 0x0C
+  22B: 2FE7       	B0MOV @YZ, A
+  22C: 0E00       	RET
+__DivUIntKernel@RTL:
+  22D: 2E00       	B0MOV A, 0x00
+  22E: 2F84       	B0MOV Y, A
+  22F: 2E01       	B0MOV A, 0x01
+  230: 2F83       	B0MOV Z, A
+  231: 2E0F       	B0MOV A, 0x0F
+  232: 0600       	CMPRS A, #00h
+  233: 8238       	JMP 0x0238
+  234: 2DFF       	MOV A, #ffh
+  235: 2F00       	B0MOV 0x00, A
+  236: 2B01       	CLR 0x01
+  237: 824E       	JMP 0x024E
+@@doNextCheck:
+  238: 2E0B       	B0MOV A, 0x0B
+  239: 0600       	CMPRS A, #00h
+  23A: 823E       	JMP 0x023E
+  23B: 2B00       	CLR 0x00
+  23C: 2B01       	CLR 0x01
+  23D: 824E       	JMP 0x024E
+@@doDivStart:
+  23E: 2B00       	CLR 0x00
+  23F: 2B01       	CLR 0x01
+  240: 3208       	B0MOV 0x82, #08h
+@@doNextBit:
+  241: 6286       	B0BCLR 0x86.2
+  242: 0B00       	RLCM 0x00
+  243: 6286       	B0BCLR 0x86.2
+  244: 0B0B       	RLCM 0x0B
+  245: 0B01       	RLCM 0x01
+  246: 2E01       	B0MOV A, 0x01
+  247: 220F       	SUB A, 0x0F
+  248: 7A86       	B0BTS1 0x86.2
+  249: 824C       	JMP 0x024C
+  24A: 2F01       	B0MOV 0x01, A
+  24B: 6800       	B0BSET 0x00.0
+@@dec_num:
+  24C: 2682       	DECMS 0x82
+  24D: 8241       	JMP 0x0241
+@@Ret:
+  24E: 2E00       	B0MOV A, 0x00
+  24F: 2FE7       	B0MOV @YZ, A
+  250: 7815       	B0BTS1 0x15.0
+  251: 8254       	JMP 0x0254
+  252: 2E01       	B0MOV A, 0x01
+  253: 2FE7       	B0MOV @YZ, A
+@@RetResult:
+  254: 0E00       	RET
+__Mov2ByteRamToLArg@RTL:
+  255: 2EE7       	B0MOV A, @YZ
+  256: 2F0B       	B0MOV 0x0B, A
+  257: 1683       	INCMS 0x83
+  258: 0000       	NOP
+  259: 2EE7       	B0MOV A, @YZ
+  25A: 2F0C       	B0MOV 0x0C, A
+  25B: 0E00       	RET
+__Mov4ByteRamToLArg@RTL:
+  25C: 2EE7       	B0MOV A, @YZ
+  25D: 2F0B       	B0MOV 0x0B, A
+  25E: 1683       	INCMS 0x83
+  25F: 0000       	NOP
+  260: 2EE7       	B0MOV A, @YZ
+  261: 2F0C       	B0MOV 0x0C, A
+  262: 1683       	INCMS 0x83
+  263: 0000       	NOP
+  264: 2EE7       	B0MOV A, @YZ
+  265: 2F0D       	B0MOV 0x0D, A
+  266: 1683       	INCMS 0x83
+  267: 0000       	NOP
+  268: 2EE7       	B0MOV A, @YZ
+  269: 2F0E       	B0MOV 0x0E, A
+  26A: 0E00       	RET
+__Mov2ByteRamToRArg@RTL:
+  26B: 2EE7       	B0MOV A, @YZ
+  26C: 2F0F       	B0MOV 0x0F, A
+  26D: 1683       	INCMS 0x83
+  26E: 0000       	NOP
+  26F: 2EE7       	B0MOV A, @YZ
+  270: 2F10       	B0MOV 0x10, A
+  271: 0E00       	RET
+__Mov4ByteRamToRArg@RTL:
+  272: C26B       	CALL 0x026B
+  273: 1683       	INCMS 0x83
+  274: 0000       	NOP
+  275: 2EE7       	B0MOV A, @YZ
+  276: 2F11       	B0MOV 0x11, A
+  277: 1683       	INCMS 0x83
+  278: 0000       	NOP
+  279: 2EE7       	B0MOV A, @YZ
+  27A: 2F12       	B0MOV 0x12, A
+  27B: 0E00       	RET

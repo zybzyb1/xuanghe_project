@@ -1,0 +1,499 @@
+C51 COMPILER V9.59.0.0   STC8G1K_CODE                                                      02/11/2023 20:36:13 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE STC8G1K_CODE
+OBJECT MODULE PLACED IN .\Objects\stc8g1k_code.obj
+COMPILER INVOKED BY: C:\Keil_C51\C51\BIN\C51.EXE src\stc8g1k_code.c OMF2 OPTIMIZE(8,SPEED) BROWSE INCDIR(.\src;.\Driver\
+                    -inc;.\Driver\src) DEBUG PRINT(.\Listings\stc8g1k_code.lst) TABS(2) OBJECT(.\Objects\stc8g1k_code.obj)
+
+line level    source
+
+   1          /*******************功能描述*******************
+   2          触摸功能
+   3          
+   4          1、第一次触摸继电器1 (PCB板最边上这个继电器)接通220V电源。
+   5          
+   6          2、第二次触摸继电器1 (PCB板最边上这个继电器)断开，继电器2 (PCB板中间继电器)�
+             -��通220V电源。
+   7          
+   8          3、第三次触摸继电器1 、摸继电器2 都接通220V电源。
+   9          
+  10          4、第四次触摸又回到第一次触摸实现的功能，只有(PCB板最边上这个继电器)接通2
+             -20V电源。
+  11          ************************************************/
+  12          
+  13          #include  "stc8g1k_code.h"    
+  14          #include  "STC8xxxx.h"  
+  15          #include  "STC8G_H_GPIO.h"
+  16          #include  "STC8G_H_ADC.h"
+  17          #include  "STC8G_H_NVIC.h"
+  18          #include  "string.h"
+  19          #include  "global.h"
+  20          #include  "led2_digital_tube.h"
+  21          #include  "uart.h"
+  22          #include  "infrared.h"
+  23          #include  "touch.h"
+  24          #include "temperature.h"
+  25          #include  "buzzer.h"
+  26          
+  27          #ifdef    UART_ENABLE
+              #include  "uart.h"
+              #endif
+  30          
+  31          #define ET2 0x04
+  32           
+  33          
+  34          //数据定义
+  35          bit timeFunFlag;     //定时功能标志
+  36          u8 secFlag=0;       //秒标志
+  37          u8 si_level;        //可控硅控制级数 0关闭 最大3档
+  38          
+  39          
+  40          //函数声明
+  41          void delay(u16 count);    //延时函数声明
+  42          static void Timer0Init(void);   //定时计数器0初始化函数
+  43          static void Timer1Init(void);   //定时计数器1初始化函数
+  44          static void Timer2Init(void);   //10毫秒@6.000MHz
+  45          static void gpio_config(void);
+  46          void rdelay_acton_fun(u8 action_value);
+  47          static u8  calculate_timer(u16 adValue);
+  48          static u8  time_unit_compare(u8 delayTime);
+  49          static void ADC_config(void);
+  50          static void  timer_deal(void);
+  51          static void Int1_init(void);
+  52          static void Int0_init(void);
+C51 COMPILER V9.59.0.0   STC8G1K_CODE                                                      02/11/2023 20:36:13 PAGE 2   
+
+  53          static u8 overtemperature_check(void);
+  54          
+  55          //-------------------------主函数----------------------------
+  56          void main(void)
+  57          {
+  58   1        gpio_config();
+  59   1        
+  60   1        #ifdef  ADC_ENABLE
+                //电路板温度检测 
+                ADC_config();
+                #endif
+  64   1        Timer0Init();   //定时计数器0初始化函数
+  65   1        Timer1Init();   //定时计数器1初始化函数
+  66   1        Timer2Init();   //10毫秒@6.000MHz
+  67   1        //过零检测
+  68   1        Int0_init();    //外部中断0初始化函数  过零检测脚
+  69   1        //Int3_init();    //外部中断3初始化函数  
+  70   1        infrared_init(); //红外初始化函数
+  71   1        touch_init();    //触摸初始化函数
+  72   1        buzzer_init();
+  73   1        
+  74   1        #ifdef UART_ENABLE
+                UartInit();
+                #endif
+  77   1        EA = 1;         //开中断
+  78   1        delay(500);     //等待配置稳定
+  79   1        #ifdef UART_ENABLE
+                PrintString1("STC8:\r\n");    //UART1发送一个字符串
+                #endif
+  82   1         
+  83   1        rdelay_acton_fun(0);
+  84   1        si_level =0;
+  85   1        led_display_enable=0;
+  86   1        overtemperature_flag=0;
+  87   1        buzzerEnableFlag =1;
+  88   1        
+  89   1        while(1)
+  90   1        {    
+  91   2           if(overtemperature_check())
+  92   2              continue;
+  93   2           infrared_check_deal(); 
+  94   2           touch_check_deal();//触摸检测
+  95   2           buzzer_run();
+  96   2           
+  97   2          #ifdef  ADC_ENABLE  
+                    
+                  #endif  
+ 100   2        }
+ 101   1      }
+ 102          static u8 overtemperature_check(void)
+ 103          {
+ 104   1        if(overtemperature_flag ==1)
+ 105   1        {
+ 106   2          overtemperature_flag = 0;
+ 107   2          rdelay_acton_fun(5);
+ 108   2          #ifdef UART_ENABLE
+                  TX1_write2buff(9);
+                  #endif
+ 111   2          return 1;
+ 112   2        }
+ 113   1        return 0;
+ 114   1      }
+C51 COMPILER V9.59.0.0   STC8G1K_CODE                                                      02/11/2023 20:36:13 PAGE 3   
+
+ 115          
+ 116          static void gpio_config(void)
+ 117          {
+ 118   1        
+ 119   1         //数码管引脚初始化
+ 120   1         P3_MODE_OUT_PP(GPIO_Pin_4 |GPIO_Pin_5 |GPIO_Pin_7);   //推挽输出A B C
+ 121   1         P1_MODE_OUT_PP(GPIO_Pin_0 |GPIO_Pin_2 |GPIO_Pin_3 |GPIO_Pin_4);   //推挽输出D E F G 
+ 122   1         P1_MODE_OUT_PP(GPIO_Pin_5 |GPIO_Pin_6);   //推挽输出DIG1 DIG2
+ 123   1         P15 = 0; P16=0;  //数码管不显示
+ 124   1         //触摸IC引脚初始化 
+ 125   1         P5_MODE_OUT_PP(GPIO_Pin_5);   //推挽输出AH
+ 126   1         P55 = 1;
+ 127   1         P3_ST_ENABLE(GPIO_Pin_3);     //施密特触发使能
+ 128   1         P3_MODE_IN_HIZ(GPIO_Pin_3);   //高阻输入 
+ 129   1         //Int2_init();  //P3.6/INT2下降沿中断
+ 130   1      
+ 131   1         //可控硅控制IO初始化
+ 132   1         P1_MODE_OUT_PP(GPIO_Pin_7);   //推挽输出 
+ 133   1         SI_OFF();   //关断可控硅
+ 134   1         
+ 135   1         //蜂鸣器IO初始化
+ 136   1         P1_MODE_OUT_PP(GPIO_Pin_1);   //推挽输出 
+ 137   1         P11=1;
+ 138   1        
+ 139   1      /*
+ 140   1          #if   0
+ 141   1        //STC8G系列单片机除P3.0和P3.1外，所有I/O上电均为高阻输入状态，需先配置再使用
+ 142   1        P3M0 |=0x08;    //P3.3引脚为推挽输出模式
+ 143   1        P3M1 &=0xF7;    //P3.3引脚为推挽输出模式
+ 144   1        RSTCFG &=0xEF;    //复位引脚P5.4当做普通I/O引脚
+ 145   1        P5M0 |=0x10;    //P5.4引脚为推挽输出模式
+ 146   1        P5M1 &=0xEF;    //P5.4引脚为推挽输出模式
+ 147   1        P5M0 &=0xDF;    //P5.5引脚为准双向口模式
+ 148   1        P5M1 &=0xDF;    //P5.5引脚为准双向口模式
+ 149   1        #endif
+ 150   1          GPIO_InitTypeDef  GPIO_InitStructure;   //结构定义
+ 151   1      
+ 152   1          GPIO_InitStructure.Pin  = GPIO_Pin_0 | GPIO_Pin_1;    //指定要初始化的IO, GPIO_Pin_0 ~ GPIO_Pin_7
+ 153   1          GPIO_InitStructure.Mode = GPIO_PullUp;  //指定IO的输入或输出方式,GPIO_PullUp,GPIO_HighZ,GPIO_OU
+             -T_OD,GPIO_OUT_PP
+ 154   1          GPIO_Inilize(GPIO_P3,&GPIO_InitStructure);  //初始化
+ 155   1        
+ 156   1         P3_PULL_UP_ENABLE(GPIO_Pin_0 | GPIO_Pin_1);//      
+ 157   1         //P3_PULL_UP_ENABLE(GPIO_Pin_1);//
+ 158   1        
+ 159   1         P1_MODE_OUT_PP(GPIO_Pin_0);   //推挽输出P1.0 控制中间第二个继电器
+ 160   1         P3_MODE_OUT_PP(GPIO_Pin_6 |GPIO_Pin_7);   //推挽输出P3.7 控制边上第一个继电器  //推挽输
+             -出P3.6 红外管触摸IC 小板电源控制
+ 161   1        
+ 162   1         //P3_MODE_OUT_PP(GPIO_Pin_6);   //推挽输出P3.6 红外管触摸IC 小板电源控制
+ 163   1         P3_MODE_IN_HIZ(GPIO_Pin_3 | GPIO_Pin_4);   //施密特触发使能P3.3 连接触摸IC输出脚
+ 164   1         //P3_MODE_IN_HIZ(GPIO_Pin_4);   //施密特触发使能P3.4 连接红外管接收脚
+ 165   1        
+ 166   1         DELAY1_OFF;   
+ 167   1         DELAY2_OFF; 
+ 168   1         P36 = 0; 
+ 169   1      */
+ 170   1      }
+ 171          //-------------------------延时函数----------------------------
+ 172          void delay(u16 count)
+ 173          {
+ 174   1        while(count--)
+C51 COMPILER V9.59.0.0   STC8G1K_CODE                                                      02/11/2023 20:36:13 PAGE 4   
+
+ 175   1        {
+ 176   2          _nop_();
+ 177   2        }
+ 178   1      }
+ 179          
+ 180          void rdelay_acton_fun(u8 action_value)
+ 181          {
+ 182   1          switch(action_value)
+ 183   1          {
+ 184   2              case 0:  // 断开所有继电器
+ 185   2                led_display_enable=0;  //上电LED数码管不显示
+ 186   2                si_level = 0; 
+ 187   2              break;
+ 188   2              case 1:   //数码管显示--
+ 189   2                  led_display_enable=1; 
+ 190   2                  digital_value[0]=0xff;
+ 191   2                  digital_value[1]=0xff;
+ 192   2                  buzzerEnableFlag = 1;
+ 193   2                  si_level = 0;
+ 194   2              break;
+ 195   2              case 2:  //数码管显示L1
+ 196   2                  led_display_enable=1; 
+ 197   2                  digital_value[0]=0x10;
+ 198   2                  digital_value[1]=0x01;
+ 199   2                  //buzzerEnableFlag = 1;
+ 200   2                  si_level = 1;
+ 201   2              break;
+ 202   2              case 3:
+ 203   2                  led_display_enable=1; 
+ 204   2                  digital_value[0]=0x10;
+ 205   2                  digital_value[1]=0x02;
+ 206   2                  //buzzer_enable = 1;
+ 207   2                  si_level = 2;
+ 208   2              break;
+ 209   2              case 4:
+ 210   2                  led_display_enable=1; 
+ 211   2                  digital_value[0]=0x10;
+ 212   2                  digital_value[1]=0x03;
+ 213   2                  //buzzer_enable = 1;
+ 214   2                  si_level = 3;
+ 215   2              break;
+ 216   2              case 5:
+ 217   2                  led_display_enable=1; 
+ 218   2                  digital_value[0]=0x0e;
+ 219   2                  digital_value[1]=0x01;
+ 220   2                  //buzzer_enable = 0;
+ 221   2                  si_level = 0;
+ 222   2              break;
+ 223   2              default:
+ 224   2                
+ 225   2              break;
+ 226   2          }
+ 227   1      }
+ 228          
+ 229          //-------------------------定时器初始化----------------------------
+ 230          static void Timer0Init(void)    //139微秒@6.000MHz
+ 231          {
+ 232   1        AUXR &= 0x7F;   //定时器时钟12T模式
+ 233   1        TMOD &= 0xF0;   //设置定时器模式
+ 234   1        TMOD |= 0x02;   //设置定时器模式
+ 235   1        TL0 = 0xBA;   //设置定时初值
+ 236   1        TH0 = 0xBA;   //设置定时重载值
+C51 COMPILER V9.59.0.0   STC8G1K_CODE                                                      02/11/2023 20:36:13 PAGE 5   
+
+ 237   1        TF0 = 0;    //清除TF0标志
+ 238   1        TR0 = 1;    //定时器0开始计时
+ 239   1        ET0 = 1;    //使能T0中断
+ 240   1      }
+ 241          static void Timer1Init(void)    //125毫秒@6.000MHz
+ 242          {
+ 243   1        AUXR &= 0xBF;   //定时器时钟12T模式
+ 244   1        TMOD &= 0x0F;   //设置定时器模式
+ 245   1        TL1 = 0xDC;   //设置定时初值
+ 246   1        TH1 = 0x0B;   //设置定时初值
+ 247   1        TF1 = 0;    //清除TF1标志
+ 248   1        TR1 = 1;    //定时器1开始计时
+ 249   1        
+ 250   1        ET1 = 1;    //使能T1中断
+ 251   1      }
+ 252          static void Timer2Init(void)    //10毫秒@6.000MHz
+ 253          {
+ 254   1        AUXINTIF &= ~T2IF; //清中断标志
+ 255   1        AUXR &= 0xFB;   //定时器时钟12T模式
+ 256   1        T2L = 0x78;   //设置定时初值
+ 257   1        T2H = 0xEC;   //设置定时初值
+ 258   1        AUXR &= ~0x10;//定时器2不计时
+ 259   1        IE2 = ET2;    //使能定时器中断
+ 260   1      }
+ 261          
+ 262          //-------------------------外部中断0过零检测中断初始化-------------------------
+ 263          static void Int0_init(void)
+ 264          {
+ 265   1        IT0 = 1;  //触发方式为下降沿触发
+ 266   1        EX0 = 1;  //使能INT0中断
+ 267   1      }
+ 268          
+ 269          
+ 270          //-------------------------外部中断0服务函数-------------------------
+ 271          void INT0_ISR() interrupt INT0_VECTOR   //过零检测中断
+ 272          {
+ 273   1        //可控硅控制方法：过零点后可控硅在没有外部触发条件下，自动关闭.
+ 274   1        //用time2作延时，time2最长延时长为10ms，把10ms分成3份，即每份时长为3.3ms
+ 275   1        //第一档延时时长为10-3.3ms=6.7ms，第二档延时时长为10-3.3ms*2=3.4ms，第三档全波形�
+             -��作不延时.过零点时直接触发可控硅导通
+ 276   1        //所以一二档定时器初始值计算如下：
+ 277   1        //incrementV=(0xffff-0xEC78)/4=0x0662; ---incrementV变量值：把10ms分成3份每一份的初始值的
+             -增量值
+ 278   1        //timeVal=0xEC78 + incrementV * si_level;---preTimeVal变量值：即是一二档定时器初始值
+ 279   1        
+ 280   1           u16  timeVal;// 0x0662; // 0x04c9; //0x1327;
+ 281   1           AUXR &= ~0x10;   //定时器2停止计时
+ 282   1      
+ 283   1           switch(si_level)
+ 284   1           {
+ 285   2             case 0:
+ 286   2                SI_OFF();  //关断可控硅 
+ 287   2                return;
+ 288   2             case 1:
+ 289   2                 timeVal = 0xEC78 + 0x0662; //定时器初始值越大延时时长越短,定时器工作方式是增
+             -量溢出产生中断.
+ 290   2                 TH2=timeVal/256;
+ 291   2                 TL2=timeVal%256;
+ 292   2              break;
+ 293   2             case 2:
+ 294   2                 timeVal = 0xEC78 + 0x0662 *2;
+ 295   2                 TH2=timeVal/256;
+C51 COMPILER V9.59.0.0   STC8G1K_CODE                                                      02/11/2023 20:36:13 PAGE 6   
+
+ 296   2                 TL2=timeVal%256;
+ 297   2              break;
+ 298   2             case 3:
+ 299   2                 SI_ON();   //开启可控硅
+ 300   2                 return;
+ 301   2              break;
+ 302   2           } 
+ 303   1              
+ 304   1           AUXR |= 0x10;    //定时器2开始计时;
+ 305   1          
+ 306   1      }
+ 307          
+ 308          
+ 309          
+ 310          void INT2_ISR() interrupt INT2_VECTOR  //触摸按键
+ 311          {
+ 312   1        
+ 313   1      }
+ 314          u8 display_cnt=0;
+ 315          void Time0_Handler_Callback(void)   interrupt TIMER0_VECTOR   //139us 进中断时已经清除标志//任务
+             -标记回调函数
+ 316          {
+ 317   1         if(IR_time < 0xfc)
+ 318   1           IR_time++;
+ 319   1        
+ 320   1         Touch_time++;
+ 321   1      
+ 322   1         if(display_cnt++ > 40)
+ 323   1         {
+ 324   2             display_cnt = 0;
+ 325   2             led_display();
+ 326   2         }
+ 327   1           
+ 328   1      }
+ 329          void Time1_Handler_Callback(void) interrupt TIMER1_VECTOR   //125ms 进中断时已经清除标志//任务�
+             -��记回调函数
+ 330          {
+ 331   1        static u8 secCount=0;
+ 332   1      
+ 333   1        buzzer_timer++;
+ 334   1        
+ 335   1        if(++secCount >= 8)
+ 336   1        {
+ 337   2           secCount = 0;
+ 338   2           secFlag=1;
+ 339   2           if(timeFunFlag)   //定时功能开启才计数
+ 340   2               time_cnt++;   //8小时定时计数器 1s累加一次 
+ 341   2        }
+ 342   1        
+ 343   1        
+ 344   1        #if 0
+                count--;
+                if(count == 0)
+                {
+                   IR_TimeFlag = 1;
+                   ET1 = 1;//
+                }
+                #endif
+ 352   1        
+ 353   1      }
+ 354          
+ 355          void Time2_Handler_Callback(void) interrupt TIMER2_VECTOR 
+C51 COMPILER V9.59.0.0   STC8G1K_CODE                                                      02/11/2023 20:36:13 PAGE 7   
+
+ 356          {
+ 357   1          AUXINTIF &= ~T2IF; //清中断标志
+ 358   1          SI_ON();   //开启可控硅
+ 359   1          delay(10);  //延时2us
+ 360   1          SI_OFF();  //关断可控硅 
+ 361   1          
+ 362   1      }
+ 363          
+ 364          
+ 365          
+ 366          //-------------------------定时器0初始化----------------------------
+ 367          #if 0
+              static void Time0_init(void)  //139微秒@11.0592MHz
+              {
+                AUXR &= 0x7F; //定时器时钟12T模式，工作方式2
+                TMOD &= 0xF0; 
+                TMOD |= 0x02; 
+                TL0 = 0x80;   
+                TH0 = 0x80;   
+                TF0 = 0;    //清除标志
+                ET0 = 1;    //使能T0中断
+                TR0 = 1;    //启动T0
+              }
+              //-------------------------定时器1初始化---------------------------
+              
+              static void Time1_init(void)  //278微秒@11.0592MHz
+              { 
+                  AUXR |= 0x40;//模式2 1T
+                  TMOD &= 0x0F; 
+              }
+              #endif
+ 387          
+ 388          
+ 389          
+ 390          
+ 391          
+ 392          
+ 393          
+ 394          
+ 395          
+ 396          #if 0
+              //-------------------------红外发送高电平----------------------------
+              void Wait_High(a)//a*280uS 
+              {
+                unsigned char k;
+                IR_TimeFlag = 0;
+                count = a;
+                T1_START();
+                while(!IR_TimeFlag)  //38khz载波
+                {
+                  _nop_();
+                  _nop_();
+                  k = 23;
+                  while (--k);
+                  IR_IO = ~IR_IO;
+                }
+                IR_IO = 1;
+              }
+              //-------------------------红外发送低电平----------------------------
+              void Wait_Low(a)//a*280uS 
+              {
+                IR_IO = 1;
+C51 COMPILER V9.59.0.0   STC8G1K_CODE                                                      02/11/2023 20:36:13 PAGE 8   
+
+                IR_TimeFlag = 0;
+                count = a;
+                T1_START();
+                while(!IR_TimeFlag);
+              }
+              //-------------------------红外发送单字节数据----------------------------
+              void Send_IR(u8 dat)
+              {
+                unsigned char i,j;
+                Wait_High(2);//0.56ms 
+                Wait_Low(4);//1.12ms  
+               
+                for(j=0;j<8;j++)
+                {
+                  Wait_High(1);//0.28ms 
+                  if(dat&0x01)
+                  {
+                    Wait_Low(2);// 0.56ms 
+                  }
+                  else
+                  {
+                    Wait_Low(1);//0.28ms
+                  }
+                  dat = dat>>1;    
+                }
+                
+                Wait_High(1);//0.28ms 
+              }
+              #endif
+ 447          
+ 448          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    588    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      4    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

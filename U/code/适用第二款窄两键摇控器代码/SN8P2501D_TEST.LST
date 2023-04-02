@@ -1,0 +1,700 @@
+     1  000000             
+     2  000000             ;********************************************************
+     3  000000             ;晶振  RC: 内部16MHz          当前版本: V0
+     4  000000             ;目标 MCU: SN8P2501BP,SOP14   
+     5  000000             ;开发作者:zyb                 烧录校验:  
+     6  000000             ;开始日期: 2022.9.26          完成日期: 2022.9.X
+     7  000000             ;本源码适用于发热管加热电路控制板，硬件部分由两路继电器控制
+     8  000000             ;输入控制由摇控器与触摸开关两路分别进行控制两路加热
+     9  000000             ;********************************************************
+    10  000000             ;               _____________  ____________
+    11  000000             ;              |             \/            |
+    12  000000             ;             -|P2.2                   P2.3|-TOUCH_PIN触摸输入脚
+    13  000000             ;        LIGHT-|P2.1                   P2.4|-B_TOUCH_LED_PIN蓝色触摸指示灯
+    14  000000             ;             -|P2.0                   P2.5|-
+    15  000000             ;          +5V-|VDD                     VSS|-GND
+    16  000000             ;       RELAY1-|P1.3/XIN          INT0/P0.0|-IR_PIN红外输入脚
+    17  000000             ;       RELAY2-|1.2/XOUT               P1.0|-R_POWER_LED红色电源指示灯
+    18  000000             ;             -|P1.1/RET/VPP   PWM/BZ0/P5.4|-pwm/buzzer
+    19  000000             ;              |___________________________|
+    20  000000             ;                   SN8P2511P,DIP8
+    21  000000             ;********************************************************
+    22  000000             ;#include <SN8P2501D.h>          // 头文件
+    23  000000             ;#include "global.h"             //
+    24  000000             
+    25  000000             ;#define   IR_ONOFF_BUTTON     0x1B    //红外摇控板开关键值
+    26  000000             ;#define   IR_LIGHT_BUTTON     0xBB    //红外摇控板加热丝档位调整键值
+    27  000000             
+    28  000000             ;#define   DELAY1_OFF     FP13=0    
+    29  000000             ;#define   DELAY2_OFF     FP12=0 
+    30  000000             ;#define   DELAY1_ON      FP13=1
+    31  000000             ;#define   DELAY2_ON      FP12=1 
+    32  000000             ;#define   TOUCH_PIN      FP23
+    33  000000             ;#define   BUZZER_OFF     FP54=1
+    34  000000             ;#define   BUZZER_ON      FP54=0
+    35  000000             
+    36  000000             ;#define   BUTTON_VALUE_MAX   4    //最大档位, 其实只有3档
+    37  000000             ;#define   IR_DATA_BUFFER_SIZE  5
+    38  000000             
+    39  000000             ;#define  R_POWER_LED_ON      FP24=0
+    40  000000             ;#define  B_BTOUCH_LED_ON     FP10=0
+    41  000000             ;#define  B_BTOUCH_LED_OFF    FP10=1
+    42  000000             ;********************************************************
+    43  000000             
+    44  000000             
+    45  000000             CHIP	SN8P2501D					; Select the CHIP
+    46  000000             //{{SONIX_CODE_OPTION
+    47  000000             	.Code_Option	LVD		LVD_L		; 2.0V Reset
+    48  000000             	.Code_Option	Reset_Pin	P11
+    49  000000             	.Code_Option	Watch_Dog	Disable		; Disable Watchdog
+    50  000000             	.Code_Option	High_Clk	IHRC_16M	; Internal 16M RC Oscillator
+    51  000000             	.Code_Option	Fcpu		#7     ; Fcpu = Fosc/16
+    52  000000             	.Code_Option	Security	Enable
+    53  000000             	.Code_Option	Noise_Filter	Enable
+    54  000000             //}}SONIX_CODE_OPTION
+    55  000000             							; Enable the listing function
+    56  000000             .DATA
+    57  000000             	ORG    00H
+    58  000000                    ;宏定义
+    59  E 00000001                IR_ONOFF_BUTTON   equ  1; 0x1B    ;红外摇控板开关键值
+    60  E 00000009                IR_LIGHT_BUTTON   equ  9; 0xBB    ;红外摇控板加热丝档位调整键值
+    61  000000                    
+    62  E 000300D1                DELAY1_PIN    equ   P1.3    
+    63  E 000200D1                DELAY2_PIN    equ   P1.2 
+    64  E 000300D2                TOUCH_PIN     equ   P2.3
+    65  E 000400D5                BUZZER_PIN    equ   P5.4
+    66  E 000100D2                LIGHT_PIN     equ   P2.1
+    67  E 000400D2                R_POWER_LED_PIN     equ   P2.4 
+    68  E 000000D1                B_BTOUCH_LED_PIN    equ   P1.0
+    69  000000                   
+    70  000000             
+    71  E 00000007                BUTTON_VALUE_MAX    equ   7    //最大档位, 其实只有6档
+    72  E 00000005                IR_DATA_BUFFER_SIZE equ   5
+    73  000000             
+    74  000000                   
+    75  000000                   
+    76  000000             
+    77  000000                    ;数据定义
+    78  0000 D                    sysFlag          ds   1 
+    79  0001 D                    sysFlag1         ds   1
+    80  0002 D                    IR_time          ds   1		;下降沿之间的时间计数值
+    81  0003 D                    IR_data          ds   1		;引导码+8个位数据各自占用的时间
+    82  0004 D                    Touch_timeL      ds   1          ;触摸计时器L
+    83  0005 D                    Touch_timeH      ds   1          ;触摸计时器H
+    84  0006 D                    IR_bit           ds   1		;变量IR_bit用于指示红外数据的位数
+    85  0007 D                    btn_value        ds   1          ;红外按键键值寄存器
+    86  000008             
+    87  0008 D                    IR_count         ds   1          ;红外管接收到数据后延时计数器--250ms
+    88  0009 D                    IRdata           ds   1
+    89  000A D                    buzzerCntL       ds   1          ;蜂鸣器计数器低字节
+    90  000B D                    buzzerCntH       ds   1          ;蜂鸣器计数器高字节
+    91  000C D                    pulseCount       ds   1          ;脉冲计数 ---计数前17个脉冲
+    92  00000D                    
+    93  000D D                    tempVal          ds   1          ;临时变量
+    94  00000E              
+    95  E 00000000                IR_Flag          equ  sysFlag.0 	;红外数据接收完成标志位
+    96  E 00010000                Touch_flag       equ  sysFlag.1  ;触摸IC输出标志
+    97  E 00020000                touch_preFlag    equ  sysFlag.2  ;上次触摸IC输出标志
+    98  E 00030000                timeFunFlag      equ  sysFlag.3;       ;定时功能标志
+    99  E 00040000                sysFunFlag       equ  sysFlag.4;       ;系统功能标志
+   100  E 00050000                isRec            equ  sysFlag.5;
+   101  E 00060000                buzzerFlag       equ  sysFlag.6;
+   102  E 00070000                buzzerEnableFlag equ  sysFlag.7;
+   103  00000E             
+   104  E 00000001                edgeFlag         equ  sysFlag1.0     ;红外管接收脚边沿标识
+   105  E 00010001                light_flag       equ  sysFlag1.1     ;照明LED灯状态指示灯
+   106  E 00020001                isStartFlag      equ  sysFlag1.2     ;启动接收标志
+   107  E 00030001                workFlag         equ  sysFlag1.3     ;正试计数脉冲
+   108  E 00040001                int0_flag        equ  sysFlag1.4     ;int0中断标志
+   109  00000E             	   
+   110  000000             .CODE
+   111  000000             	ORG	0				;Code section start
+   112  000000   8010(2)  	jmp		Reset				;Reset vector
+   113  000001             							;Address 4 to 7 are reserved
+   114  000008             	ORG	8
+   115  000008   810C(2)          JMP     IntService
+   116  000009             
+   117  000010                     ORG     10H	
+   118  000010             Reset:
+   119  000010   2BCA(1)          CLR    OSCM         ;// 普通模式(双时钟)         
+   120  000011   2BC9(1)          CLR    INTEN        ;                
+   121  000012   2BC8(1)          CLR    INTRQ        ;               
+   122  000013                   
+   123  000013                     //--- I0 Config --------------------------------------
+   124  000013   2DFE(1)          MOV  A, #0FEH
+   125  000014   2FB8(1)          B0MOV P0M,  A;                // P00输入  0=输入   1=输出
+   126  000015   2DF7(1)          MOV  A, #0F7H
+   127  000016   2FC2(1)          B0MOV P2M,  A;                // P2.3输入 P2.4输出驱动LED红色电源指示灯 P2.1输出驱动8个LED灯 高电平有效
+   128  000017             
+   129  000017   2DFF(1)          MOV  A, #0ffH
+   130  000018   2FC1(1)          B0MOV P1M,  A;                // P1.0输出驱动LED 蓝色触摸灯    P1.3P1.2输出驱动两组继电器
+   131  000019   2DFF(1)          MOV  A, #0ffH
+   132  00001A   2FC5(1)          B0MOV P5M,  A;                // P5.4输出 蜂鸣器输出保持高电平
+   133  00001B                     
+   134  00001B   1E01(1)          MOV   A, 0x01;
+   135  00001C   2FE0(1)          B0MOV P0UR, A;                // 0=不上拉 1=上拉 P0.0拉
+   136  00001D   1E00(1)          MOV   A, 0x00
+   137  00001E   2FE2(1)          B0MOV P2UR, A;                //
+   138  00001F   2FE1(1)          B0MOV P1UR, A;                // 
+   139  000020   2FE5(1)          B0MOV P5UR, A;                //
+   140  000021             
+   141  000021   63D1(1)          B0BCLR DELAY1_PIN;         
+   142  000022   62D1(1)          B0BCLR DELAY2_PIN; 
+   143  000023   64D2(1)  	B0BCLR R_POWER_LED_PIN;
+   144  000024   68D1(1)          B0BSET B_BTOUCH_LED_PIN;
+   145  000025   64D5(1)          B0BCLR BUZZER_PIN;
+   146  000026                
+   147  000026   2B00(1)          CLR    sysFlag
+   148  000027   2B01(1)          CLR    sysFlag1
+   149  000028   2B07(1)          CLR    btn_value
+   150  000029   2B03(1)          CLR    IR_data
+   151  00002A   2B02(1)          CLR    IR_time
+   152  00002B   2B06(1)          CLR    IR_bit
+   153  00002C   2B09(1)          CLR    IRdata
+   154  00002D   2B08(1)          CLR    IR_count
+   155  00002E   2B0A(1)          CLR    buzzerCntL
+   156  00002F   2B0B(1)          CLR    buzzerCntH
+   157  000030   2B04(1)          CLR    Touch_timeL
+   158  000031   2B05(1)          CLR    Touch_timeH
+   159  000032   2B0C(1)          CLR    pulseCount
+   160  000033                     
+   161  000033   6400(1)          B0BCLR   sysFunFlag   ;上电置0
+   162  000034   6101(1)          B0BCLR   light_flag
+   163  000035   6F00(1)          B0BSET     buzzerEnableFlag;蜂鸣器响 
+   164  000036             
+   165  000036                     //--- P00 Config-------------------------------------
+   166  000036   2D10(1)          MOV   A, #10H
+   167  000037   2FBF(1)          B0MOV PEDGE,  A;               //下降沿触发中断
+   168  000038                     ;PEDGE = 0x08;               //上升沿触发中断
+   169  000038   60C8(1)          B0BCLR	FP00IRQ;               //清除中断标志
+   170  000039   68C9(1)          B0BSET   FP00IEN;               //P0.0 外部中断(INT0)使能
+   171  00003A   6801(1)          B0BSET   edgeFlag;
+   172  00003B             
+   173  00003B                     //--- T0  Config--定时器T0配置------------------------------------
+   174  00003B             		//FT0TB = 0;                  //禁止 RTC
+   175  00003B   2D70(1)          MOV  A,  #70H
+   176  00003C   2FD8(1)          B0MOV T0M, A;                   // 16M/16/2= 2uS   Fcpu的2分频 
+   177  00003D                     //T0M=0x10;                   // 1M/16/128=500uS   Fcpu的128分频
+   178  00003D   2DBA(1)          MOV  A,  #0baH   ;
+   179  00003E   2FD9(1)          B0MOV T0C,   A ;                    //256-139/2 = 256- 69.5 = 186.5 每139us中断一次 实际上是150us     
+   180  00003F   64C8(1)  	B0BCLR	FT0IRQ ;                   // T0 中断请求标志清零。
+   181  000040   6CC9(1)  	B0BSET 	FT0IEN ;                   //允许响应 T0 中断。
+   182  000041   6FD8(1)          B0BSET   FT0ENB;                   //启动定时器T0运行 
+   183  000042             
+   184  000042                     //--- TC0 PWM Config  蜂鸣器驱动 2K频率-高电平和低电平的时间宽度都为 250μs--------------------------------------
+   185  000042   2D70(1)          MOV  A, #70H
+   186  000043   2FDA(1)          B0MOV TC0M, A;                  // 16MHz/16=  Fcpu/2   2us  256-250/2=
+   187  000044   2D9B(1)          MOV  A, #155
+   188  000045   2FCD(1)          B0MOV  TC0R, A;                   //每隔125*2 =250us中断一次
+   189  000046   2FDB(1)          B0MOV  TC0C, A;                   //  
+   190  000047   6ADA(1)          B0BSET  FALOAD0;                  //使能 TC0 自动装载
+   191  000048   61DA(1)          B0BCLR	FTC0OUT;                  //允许P5.4口作PWM输出
+   192  000049   60DA(1)  	B0BCLR	FPWM0OUT;                //允许PWM/BUZZER功能  
+   193  00004A   6DC9(1)          B0BSET   FTC0IEN;                  //允许中断Enable TC0 Interrput
+   194  00004B   6FDA(1)          B0BSET   FTC0ENB;                  // 定时器开启
+   195  00004C                     //----Start Run---------------------------------------
+   196  00004C   6FDF(1)          B0BSET   FGIE;                    // Enable all Interrput
+   197  00004D              
+   198  00004D                     
+   199  00004D             
+   200  00004D             Loop:
+   201  00004D                    
+   202  00004D   C051(2)          CALL IR_deal     ;红外处理
+   203  00004E   C098(2)          CALL touch_check ;触摸检测
+   204  00004F   C0C6(2)          CALL touch_deal  ;触摸处理
+   205  000050                  
+   206  000050   804D(2)          JMP Loop;
+   207  000051             
+   208  000051             
+   209  000051             ;**************** 红外处理************************
+   210  000051             IR_deal: 
+   211  000051   7800(1+S)          B0BTS1     IR_Flag
+   212  000052   8082(2)          JMP        IR_deal_end
+   213  000053   2DE6(1)          MOV        A,#230
+   214  000054   0708(1+S)          CMPRS      A,IR_count
+   215  000055   8080(2)          JMP        IR_noden      ;IR_count != 230 还存在 IR_count > 230的情况
+   216  000056             IR_den:
+   217  000056   6000(1)          B0BCLR     IR_Flag       ;IR_count = 230 //红外数据接收完成后 230*139 = 31970us处理数据
+   218  000057   2B08(1)          CLR        IR_count
+   219  000058                     
+   220  000058                     ;B0BTS0     sysFunFlag ;红外按键是在系统功能未开启的情况下才能使用，如果sysFunFlag=1则系统功能己开启
+   221  000058                     ;JMP        IR_deal_end
+   222  000058             
+   223  000058   2E09(1)          B0MOV      A, IRdata
+   224  000059   2A0F(1)  	AND        A, #0FH
+   225  00005A   2F0D(1)  	B0MOV      tempVal,A  ;低四位代表IR_LIGHT_BUTTON关键值 
+   226  00005B                     
+   227  00005B   6286(1)          B0BCLR     FC          ;高四位代表IR_ONOFF_BUTTON开键值
+   228  00005C   0909(1)          RRCM       IRdata
+   229  00005D   6286(1)          B0BCLR     FC 
+   230  00005E   0909(1)          RRCM       IRdata
+   231  00005F   6286(1)          B0BCLR     FC 
+   232  000060   0909(1)          RRCM       IRdata
+   233  000061   6286(1)          B0BCLR     FC 
+   234  000062   0909(1)          RRCM       IRdata 
+   235  000063   2E09(1)          B0MOV      A, IRdata
+   236  000064   070D(1+S)          CMPRS      A, tempVal
+   237  000065   8068(2)  	JMP        value_noDen    ;如果两键值不相等则继续判断
+   238  000066   2B09(1)          CLR        IRdata
+   239  000067   8082(2)          JMP        IR_deal_end ;如果两键值相等则退出
+   240  000068             value_noDen:      ;如果两键值不相等则继续判断
+   241  000068   2B09(1)          CLR        IRdata
+   242  000069   7286(1+S)          B0BTS0    FC
+   243  00006A   8071(2)          JMP        onoffDeal ;没借位，说明IR_ONOFF_BUTTON开键值 > IR_LIGHT_BUTTON关键值 
+   244  00006B                                          ;借位，说明IR_ONOFF_BUTTON开键值 < IR_LIGHT_BUTTON关键值
+   245  00006B                     ;灯键处理 
+   246  00006B   6F00(1)          B0BSET     buzzerEnableFlag;蜂鸣器响
+   247  00006C   6C00(1)  	B0BSET     sysFunFlag
+   248  00006D   60D1(1)  	B0BCLR     B_BTOUCH_LED_PIN;
+   249  00006E   6CD2(1)          B0BSET     R_POWER_LED_PIN;
+   250  00006F   C0D2(2)          CALL       btn_inc_fun     ;调用键值加1处理函数
+   251  000070   8082(2)          JMP        IR_deal_end ; 
+   252  000071              
+   253  000071             onoffDeal:   ;电源开关键开处理
+   254  000071   6F00(1)          B0BSET     buzzerEnableFlag;蜂鸣器响 
+   255  000072   7400(1+S)          B0BTS0     sysFunFlag ;红外按键是在系统功能未开启的情况下才能使用，如果sysFunFlag=1则系统功能己开启
+   256  000073   8082(2)          JMP        IR_deal_end ;
+   257  000074             
+   258  000074   7101(1+S)          B0BTS0     light_flag
+   259  000075   807B(2)          JMP        light_off_d ;关处理
+   260  000076   69D2(1)          B0BSET     LIGHT_PIN   ;开灯处理灯亮
+   261  000077   6901(1)          B0BSET     light_flag
+   262  000078   6CD2(1)         	B0BSET     R_POWER_LED_PIN;
+   263  000079   60D1(1)          B0BCLR     B_BTOUCH_LED_PIN;
+   264  00007A   8082(2)          JMP        IR_deal_end ;
+   265  00007B             light_off_d:
+   266  00007B   61D2(1)          B0BCLR     LIGHT_PIN   ;关灯处理
+   267  00007C   6101(1)          B0BCLR     light_flag
+   268  00007D   64D2(1)  	B0BCLR     R_POWER_LED_PIN;
+   269  00007E   68D1(1)          B0BSET     B_BTOUCH_LED_PIN;
+   270  00007F   8082(2)          JMP        IR_deal_end ;
+   271  000080             	
+   272  000080             IR_noden:
+   273  000080   7A86(1+S)        B0BTS1      FC
+   274  000081   8056(2)        JMP         IR_den ;发生了借位说明IR_count > 230https://www.msn.cn/zh-cn/feed
+   275  000082                   ;JMP         IR_deal_end            
+   276  000082             IR_deal_end:
+   277  000082   7C01(1+S)        B0BTS1   int0_flag
+   278  000083   0E00(2)        RET
+   279  000084   2DF0(1)        MOV      A, #0F0H
+   280  000085   0702(1+S)        CMPRS    A,IR_time 
+   281  000086   0E00(2)        RET
+   282  000087   8095(2)  	  JMP      IR_BUDEN0
+   283  000088             IR_DEN0:
+   284  000088   2B02(1)        CLR        IR_time
+   285  000089   2B0C(1)        CLR        pulseCount
+   286  00008A   6801(1)        B0BSET     edgeFlag          ;红外管接收脚边沿标识
+   287  00008B   6500(1)        B0BCLR     isRec             ;照明LED灯状态指示灯
+   288  00008C   6201(1)        B0BCLR     isStartFlag       ;启动接收标志
+   289  00008D   6301(1)        B0BCLR     workFlag
+   290  00008E   6401(1)  	  B0BCLR     int0_flag
+   291  00008F              //--- P00 Config-------------------------------------
+   292  00008F   2D10(1)        MOV   A, #10H
+   293  000090   2FBF(1)        B0MOV PEDGE,  A;               //下降沿触发中断
+   294  000091                   ;PEDGE = 0x08;               //上升沿触发中断
+   295  000091   60C8(1)        B0BCLR	FP00IRQ;               //清除中断标志
+   296  000092   68C9(1)        B0BSET   FP00IEN;               //P0.0 外部中断(INT0)使能
+   297  000093   6801(1)        B0BSET   edgeFlag;
+   298  000094   0E00(2)        RET
+   299  000095             IR_BUDEN0:
+   300  000095   7A86(1+S)        B0BTS1   FC
+   301  000096   8088(2)        JMP      IR_DEN0
+   302  000097   0E00(2)        RET
+   303  000098             ;******************end***********************************
+   304  000098             ;/*************触摸功能*********************/
+   305  000098             
+   306  000098             ;-------------触摸输出检测-------------------
+   307  000098             ;无触摸时高电平，有触摸时低电平时长大于300ms
+   308  000098             touch_check:
+   309  000098   73D2(1+S)      B0BTS0   TOUCH_PIN 
+   310  000099   80B1(2)      JMP      touch_Hight        ;当引脚高电平   
+   311  00009A   7100(1+S)      B0BTS0   Touch_flag       ;当引脚为低电平执行
+   312  00009B   80AE(2)      JMP      touch_L;当Touch_flag=0时执行
+   313  00009C                                 ;当Touch_flag=1时执行 //139微秒 *500 = 69.5ms
+   314  00009C   2D01(1)      MOV      A,#1 ; 500 =1F4H    
+   315  00009D   0705(1+S)      CMPRS    A,Touch_timeH
+   316  00009E   80A6(2)      JMP      Hsubnden
+   317  00009F   2DF4(1)      MOV      A,#0f4H  ;Touch_timeH =1 处理 比较低字节 
+   318  0000A0   0704(1+S)      CMPRS    A,Touch_timeL
+   319  0000A1   80A3(2)      JMP      Lsubnden    ;跳至低字节不相等，高字节相等，处理
+   320  0000A2   80A9(2)      JMP      daden500;低字节相等，高字节相等，处理
+   321  0000A3                 
+   322  0000A3             Lsubnden:
+   323  0000A3   7A86(1+S)       B0BTS1   FC 
+   324  0000A4   80A9(2)       JMP      daden500;c=0发生借位，Touch_timeL>#F4H且 高字节相等，
+   325  0000A5   80C5(2)       JMP      touch_check_end ;c=0未发生借位，
+   326  0000A6             
+   327  0000A6             Hsubnden:   ;Touch_timeH !=1 处理 
+   328  0000A6   7A86(1+S)      B0BTS1   FC
+   329  0000A7   80A9(2)      JMP      daden500   ;进位标志置 0 借位发生，表明Touch_timeH > 1 即大于500
+   330  0000A8   80C5(2)      JMP      touch_check_end ;Touch_timeH < 1
+   331  0000A9             
+   332  0000A9             daden500:    ; Touch_timeH  Touch_timeL >=500 执行   
+   333  0000A9   2B04(1)      CLR       Touch_timeL
+   334  0000AA   2B05(1)      CLR       Touch_timeH
+   335  0000AB   6900(1)      B0BSET   Touch_flag
+   336  0000AC   6C00(1)      B0BSET   sysFunFlag
+   337  0000AD   80C5(2)      JMP      touch_check_end 
+   338  0000AE             touch_L:
+   339  0000AE   2B04(1)      CLR      Touch_timeL
+   340  0000AF   2B05(1)      CLR      Touch_timeH
+   341  0000B0   80C5(2)      JMP      touch_check_end
+   342  0000B1             
+   343  0000B1             
+   344  0000B1             touch_Hight:    ;当引脚为高电平执行  
+   345  0000B1   7900(1+S)      B0BTS1   Touch_flag        ;当引脚为低电平执行
+   346  0000B2   80C3(2)      JMP      touch_flag_L;当Touch_flag=0时执行
+   347  0000B3                 ;处理if(Touch_time > 2000) 
+   348  0000B3                 ;2000 hex 7D0
+   349  0000B3   2D07(1)      MOV      A,   #7   ; 先判断高位 Touch_timeH=7   
+   350  0000B4   0705(1+S)      CMPRS    A,   Touch_timeH
+   351  0000B5   80BD(2)      JMP      Hnoden 
+   352  0000B6             Hden:;高字节相等继续判断低字节
+   353  0000B6   2DD0(1)      MOV      A,   #0d0H 
+   354  0000B7   0704(1+S)      CMPRS    A,   Touch_timeL
+   355  0000B8   80C0(2)      JMP      Lnoden
+   356  0000B9             Lden:;高低字节都相等  说明计数等于2000 处理等于大于2000
+   357  0000B9   2B04(1)      CLR      Touch_timeL    
+   358  0000BA   2B05(1)      CLR      Touch_timeH
+   359  0000BB   6100(1)      B0BCLR   Touch_flag
+   360  0000BC   80C5(2)      JMP      touch_check_end
+   361  0000BD             
+   362  0000BD             Hnoden:;高字节不相等
+   363  0000BD   7286(1+S)      B0BTS0   FC    
+   364  0000BE   80C5(2)      JMP      touch_check_end ;没发生借位
+   365  0000BF   80B9(2)      JMP      Lden ; Touch_timeH>7 说明计数大于2000 处理大于2000
+   366  0000C0             Lnoden:    ;处理高字节等于7低字节不等于D0H
+   367  0000C0   7286(1+S)      B0BTS0   FC    
+   368  0000C1   80C5(2)      JMP      touch_check_end ;没发生借位，说明Touch_timeL<7DH
+   369  0000C2   80B9(2)      JMP      Lden ;发生借位 Touch_timeH=7,Touch_timeL>7DH 说明计数大于2000 处理大于2000
+   370  0000C3             touch_flag_L:
+   371  0000C3   2B04(1)      CLR       Touch_timeL
+   372  0000C4   2B05(1)      CLR       Touch_timeH
+   373  0000C5                ; JMP       touch_check_end
+   374  0000C5             touch_check_end:
+   375  0000C5   0E00(2)      RET
+   376  0000C6             ;-------------------------------------------------------------
+   377  0000C6             ;-----------------触摸处理------------------------------------
+   378  0000C6             touch_deal:
+   379  0000C6   7100(1+S)      B0BTS0     Touch_flag   ; 判断触摸标志==1
+   380  0000C7   80CA(2)      JMP        deal_den1    ;Touch_flag==1处理
+   381  0000C8   6200(1)      B0BCLR     touch_preFlag ;Touch_flag==0处理
+   382  0000C9   80D1(2)      JMP        touch_deal_end
+   383  0000CA             
+   384  0000CA             deal_den1:
+   385  0000CA   7200(1+S)      B0BTS0     touch_preFlag   ; 判断上次触摸标志touch_preFlag==0？
+   386  0000CB   80D1(2)      JMP        touch_deal_end  ; touch_preFlag=1 处理
+   387  0000CC   6A00(1)      B0BSET     touch_preFlag   ;touch_preFlag=0 处理 
+   388  0000CD   6F00(1)      B0BSET     buzzerEnableFlag;蜂鸣器响
+   389  0000CE   60D1(1)      B0BCLR     B_BTOUCH_LED_PIN;
+   390  0000CF   6CD2(1)      B0BSET     R_POWER_LED_PIN;
+   391  0000D0   C0D2(2)      CALL       btn_inc_fun     ;调用键值加1处理函数
+   392  0000D1             touch_deal_end:
+   393  0000D1                
+   394  0000D1   0E00(2)      RET 
+   395  0000D2             
+   396  0000D2             btn_inc_fun:   ;键值加1处理函数 判断键值是否超过最大值BUTTON_VALUE_MAX
+   397  0000D2   1607(1+S)      INCMS      btn_value
+   398  0000D3   0000(1)      NOP
+   399  0000D4   2D07(1)      MOV        A, #BUTTON_VALUE_MAX
+   400  0000D5   0707(1+S)      CMPRS      A, btn_value
+   401  0000D6   80DB(2)      JMP        deal_noden2   ;btn_value不等BUTTON_VALUE_MAX
+   402  0000D7             deal_den2:                   ;btn_value相等BUTTON_VALUE_MAX
+   403  0000D7   2D01(1)      MOV        A,  #1  
+   404  0000D8   2F07(1)      B0MOV      btn_value,A
+   405  0000D9   C0DF(2)      CALL       delay_action_fun
+   406  0000DA   80DE(2)      JMP        btn_end
+   407  0000DB             deal_noden2:    ;btn_value不等BUTTON_VALUE_MAX            
+   408  0000DB   7A86(1+S)      B0BTS1     FC
+   409  0000DC   80D7(2)      JMP        deal_den2 ;发生借位说明btn_value>BUTTON_VALUE_MAX
+   410  0000DD   C0DF(2)      CALL       delay_action_fun
+   411  0000DE                 ;JMP        btn_end     
+   412  0000DE             btn_end:
+   413  0000DE              
+   414  0000DE   0E00(2)      RET 	
+   415  0000DF             ;-------------------------------------------------------------
+   416  0000DF             ;***************************END********************************
+   417  0000DF             
+   418  0000DF             ;8888888888*继电器动作函数*8888888888888888888
+   419  0000DF             delay_action_fun: 
+   420  0000DF   2D00(1)      MOV      A,#0
+   421  0000E0   0707(1+S)      CMPRS    A, btn_value
+   422  0000E1   80E5(2)      JMP      cmpare1
+   423  0000E2   63D1(1)      B0BCLR   DELAY1_PIN  ;btn_value=0 处理
+   424  0000E3   62D1(1)      B0BCLR   DELAY2_PIN  ; 断开所有继电器
+   425  0000E4   810B(2)      JMP      delay_fun_end
+   426  0000E5             cmpare1:
+   427  0000E5   2D01(1)      MOV      A, #1
+   428  0000E6   0707(1+S)      CMPRS    A, btn_value 
+   429  0000E7   80EB(2)      JMP      cmpare2
+   430  0000E8   6BD1(1)      B0BSET   DELAY1_PIN;btn_value=1 处理
+   431  0000E9   62D1(1)      B0BCLR   DELAY2_PIN  ;继电器2断开继电器1吸合
+   432  0000EA   810B(2)      JMP      delay_fun_end
+   433  0000EB             cmpare2:
+   434  0000EB   2D02(1)      MOV      A, #2
+   435  0000EC   0707(1+S)      CMPRS    A, btn_value 
+   436  0000ED   80F1(2)      JMP      cmpare3
+   437  0000EE   63D1(1)      B0BCLR   DELAY1_PIN ;btn_value=2 处理
+   438  0000EF   6AD1(1)      B0BSET   DELAY2_PIN ;继电器1断开继电器2吸合
+   439  0000F0   810B(2)      JMP      delay_fun_end
+   440  0000F1             cmpare3:
+   441  0000F1   2D03(1)      MOV      A, #3
+   442  0000F2   0707(1+S)      CMPRS    A, btn_value 
+   443  0000F3   80F7(2)      JMP      cmpare4
+   444  0000F4   6BD1(1)      B0BSET   DELAY1_PIN ;btn_value=3 处理
+   445  0000F5   6AD1(1)      B0BSET   DELAY2_PIN ;吸合所有继电器
+   446  0000F6   810B(2)      JMP      delay_fun_end
+   447  0000F7             cmpare4:
+   448  0000F7   2D04(1)      MOV      A, #4
+   449  0000F8   0707(1+S)      CMPRS    A, btn_value 
+   450  0000F9   80FC(2)      JMP      cmpare5
+   451  0000FA   69D2(1)      B0BSET   LIGHT_PIN;btn_value=4 处理 灯点亮           
+   452  0000FB   810B(2)      JMP      delay_fun_end
+   453  0000FC             cmpare5:
+   454  0000FC   2D05(1)      MOV      A, #5
+   455  0000FD   0707(1+S)      CMPRS    A, btn_value 
+   456  0000FE   8103(2)      JMP      cmpare6
+   457  0000FF   69D2(1)      B0BSET   LIGHT_PIN ;btn_value=5 处理灯亮
+   458  000100   63D1(1)      B0BCLR   DELAY1_PIN ;
+   459  000101   62D1(1)      B0BCLR   DELAY2_PIN; 断开所有继电器
+   460  000102   810B(2)      JMP      delay_fun_end
+   461  000103             cmpare6:
+   462  000103   2D06(1)      MOV      A, #6
+   463  000104   0707(1+S)      CMPRS    A, btn_value 
+   464  000105   810B(2)      JMP      delay_fun_end
+   465  000106   61D2(1)      B0BCLR   LIGHT_PIN ;btn_value=6 处理 处理灯灭
+   466  000107   6400(1)      B0BCLR   sysFunFlag  
+   467  000108   6101(1)      B0BCLR   light_flag    
+   468  000109   64D2(1)      B0BCLR   R_POWER_LED_PIN;
+   469  00010A   68D1(1)      B0BSET   B_BTOUCH_LED_PIN;
+   470  00010B                 ;DELAY1_PIN = DELAY_OFF ;
+   471  00010B                 ;DELAY2_PIN = DELAY_OFF ; 断开所有继电器
+   472  00010B                ; JMP      delay_fun_end
+   473  00010B              
+   474  00010B             delay_fun_end:
+   475  00010B   0E00(2)       RET
+   476  00010C             ;8888888888888888*end*888888888888888888888
+   477  00010C             ;
+   478  00010C             ;脉冲宽度说明：高电平时宽1.75ms低电平时宽0.56ms为0 ，高电平时宽0.56ms低电平时宽0.56ms为1
+   479  00010C             ;              前面17个脉冲8个+9个0，不计入内
+   480  00010C             IntService:
+   481  00010C   0400(1)        PUSH
+   482  00010D             ;********************** INT0 中断服务程序************************** 
+   483  00010D                    //P00 interrput//P0.0 外部中断(INT0)
+   484  00010D   78C8(1+S)        B0BTS1   FP00IRQ ; 检测 P00IRQ。 ; INT0 中断服务程序
+   485  00010E   816E(2)        JMP      T0_int ; P00IRQ = 0。
+   486  00010F   60C8(1)        B0BCLR   FP00IRQ ; P00IRQ 清零。
+   487  000110   6C01(1)        B0BSET   int0_flag
+   488  000111                
+   489  000111   7801(1+S)        B0BTS1   edgeFlag  ;
+   490  000112   814C(2)        JMP      Rising_edge;跳至上升沿中断处理 
+   491  000113                
+   492  000113               ;Falling edge    //下降沿中断  
+   493  000113   2D08(1)        MOV      A, #8   ; //触发方式设为上沿触发
+   494  000114   2FBF(1)        B0MOV    PEDGE,A
+   495  000115   6001(1)        B0BCLR   edgeFlag  
+   496  000116             
+   497  000116   7301(1+S)        B0BTS0   workFlag
+   498  000117   812B(2)        JMP      work_pluse ;开始记录时间长 1-0码 
+   499  000118             
+   500  000118   7D00(1+S)        B0BTS1   isRec     
+   501  000119   8129(2)        JMP      first_int  ;0：第一次下沿中断
+   502  00011A             
+   503  00011A   7201(1+S)        B0BTS0   isStartFlag ;启动标志0 判断4.5ms高电平脉宽
+   504  00011B   8129(2)        JMP      first_int   ;为1,退出
+   505  00011C   2D19(1)        MOV      A, #25     ;//判断引导码4.5ms, 25*139us=3.475ms
+   506  00011D   0702(1+S)        CMPRS    A,IR_time
+   507  00011E   8125(2)        JMP      timeBuDen  ;跳至IR_time!=25处理
+   508  00011F             falling_result:             ; IR_time=25处理
+   509  00011F   2B03(1)        CLR      IR_data
+   510  000120   6A01(1)        B0BSET   isStartFlag
+   511  000121   2D00(1)        MOV      A,#0
+   512  000122   2F06(1)        B0MOV    IR_bit,A  ; //位数变量自增
+   513  000123   2B02(1)        CLR      IR_time   ; //清零时间宽度计数值
+   514  000124   816B(2)        JMP      Exit_int0      
+   515  000125             timeBuDen:  
+   516  000125   7A86(1+S)        B0BTS1   FC
+   517  000126   811F(2)        JMP      falling_result
+   518  000127   2B02(1)        CLR      IR_time   ;//清零时间宽度计数值
+   519  000128   816B(2)        JMP      Exit_int0  ;没借位说明IR_time<25 
+   520  000129             
+   521  000129             first_int:
+   522  000129   2B02(1)        CLR      IR_time
+   523  00012A   816B(2)        JMP      Exit_int0
+   524  00012B             
+   525  00012B             work_pluse:    ;开始记录时间长 1-0码 
+   526  00012B   2D05(1)        MOV      A, #5
+   527  00012C   0702(1+S)        CMPRS    A, IR_time
+   528  00012D   8131(2)        JMP      noDen5
+   529  00012E             timeDen5:                ;IR_time>=5,若“时间间隔”比5大那肯定是“1码”反之为“0码”
+   530  00012E   2D80(1)        MOV      A, #80H  
+   531  00012F   1903(1)        OR       IR_data, A ;//通过按位或运算高位填1    		
+   532  000130   8133(2)        JMP      dataOK
+   533  000131             noDen5:
+   534  000131   7A86(1+S)        B0BTS1   FC			    		
+   535  000132   812E(2)        JMP      timeDen5  ;产生借位说明IR_time>5			                   
+   536  000133             dataOK:	 
+   537  000133   2B02(1)        CLR      IR_time	 ;清零时间宽度计数值        //若数据没有拼合完8次
+   538  000134   1606(1+S)        INCMS    IR_bit 	 ;位数变量自增	
+   539  000135   2D08(1)        MOV      A, #8	 ;如果达到了6位（8个数据位）
+   540  000136   0706(1+S)        CMPRS    A, IR_bit
+   541  000137   8149(2)        JMP      bitBuden9
+   542  000138                                      ;IR_bit达到了8位（8个数据位）处理
+   543  000138   6800(1)        B0BSET   IR_Flag   ;红外数据接收完成标志位置1
+   544  000139   2B06(1)        CLR      IR_bit    ;位数变量清零
+   545  00013A   2B0C(1)        CLR      pulseCount
+   546  00013B   6500(1)        B0BCLR   isRec
+   547  00013C   6201(1)        B0BCLR   isStartFlag
+   548  00013D   6301(1)        B0BCLR   workFlag
+   549  00013E                 
+   550  00013E   2D09(1)        MOV      A, #IR_LIGHT_BUTTON      
+   551  00013F   0703(1+S)        CMPRS    A, IR_data     
+   552  000140   8143(2)        JMP      IRd_buDenLight
+   553  000141   1609(1+S)        INCMS    IRdata
+   554  000142   816B(2)        JMP      Exit_int0
+   555  000143             IRd_buDenLight:
+   556  000143   2D01(1)        MOV      A, #IR_ONOFF_BUTTON
+   557  000144   0703(1+S)        CMPRS    A, IR_data 
+   558  000145   816B(2)        JMP      Exit_int0
+   559  000146   2D10(1)        MOV      A, #0x10
+   560  000147   1309(1)        ADD      IRdata,A
+   561  000148   816B(2)        JMP      Exit_int0
+   562  000149             bitBuden9:			 
+   563  000149   6286(1)         B0BCLR  FC    ;通过右移运算“腾出”位置准备下一位判定
+   564  00014A   0903(1)         RRCM    IR_data 
+   565  00014B   816B(2)         JMP      Exit_int0 	
+   566  00014C                  
+   567  00014C               
+   568  00014C             Rising_edge:;上升沿中断
+   569  00014C   2D10(1)        MOV      A,   #010H
+   570  00014D   2FBF(1)        B0MOV    PEDGE,A
+   571  00014E   6801(1)        B0BSET   edgeFlag	 ;配置触发方式为下降沿触发;
+   572  00014F                   		         	
+   573  00014F             
+   574  00014F   7301(1+S)        B0BTS0   workFlag
+   575  000150   815B(2)        JMP      pulseBuden
+   576  000151             
+   577  000151   7D00(1+S)        B0BTS1   isRec     
+   578  000152   815D(2)        JMP      first_edge_int  ;0：第一次上沿中断
+   579  000153                  
+   580  000153   7A01(1+S)        B0BTS1   isStartFlag ;启动标志
+   581  000154   815B(2)        JMP      pulseBuden
+   582  000155   160C(1+S)        INCMS    pulseCount
+   583  000156   2D11(1)        MOV      A,#17
+   584  000157   070C(1+S)        CMPRS    A, pulseCount
+   585  000158   815B(2)        JMP      pulseBuden
+   586  000159   2B0C(1)        CLR      pulseCount
+   587  00015A   6B01(1)        B0BSET   workFlag
+   588  00015B             pulseBuden:
+   589  00015B   2B02(1)        CLR      IR_time
+   590  00015C   816B(2)        JMP      Exit_int0
+   591  00015D             
+   592  00015D             first_edge_int:
+   593  00015D                    ;第一次上沿中断,开始处理9ms判断
+   594  00015D   2D37(1)        MOV      A, #55     ;//判断引导码(9ms+1.12ms)（0.56ms+1.12ms） 55*139us=7.645ms
+   595  00015E   0702(1+S)        CMPRS    A,IR_time
+   596  00015F   8167(2)        JMP      timeBuDen1  ;跳至IR_time!=55处理
+   597  000160             rising_result:             ; IR_time=60处理
+   598  000160   2B03(1)        CLR      IR_data
+   599  000161   6D00(1)        B0BSET   isRec
+   600  000162   2D00(1)        MOV      A,#0
+   601  000163   2F06(1)        B0MOV    IR_bit,A  ; //位数变量自增
+   602  000164   2B02(1)        CLR      IR_time   ; //清零时间宽度计数值
+   603  000165   6201(1)        B0BCLR   isStartFlag;//清零启动标志
+   604  000166   816B(2)        JMP      Exit_int0      
+   605  000167             timeBuDen1:  
+   606  000167   7A86(1+S)        B0BTS1   FC
+   607  000168   8160(2)        JMP      rising_result
+   608  000169   2B02(1)        CLR      IR_time   ;//清零时间宽度计数值
+   609  00016A   816B(2)        JMP      Exit_int0  ;没借位说明IR_time<55  
+   610  00016B                
+   611  00016B             ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;     
+   612  00016B             						
+   613  00016B             Exit_int0:
+   614  00016B   2B08(1)         CLR       IR_count ;//有接收数据则清零延时计数器  
+   615  00016C   68C9(1)         B0BSET    FP00IEN  ;//P0.0 外部中断(INT0)使能
+   616  00016D   81A7(2)         JMP   Exit_int
+   617  00016E             
+   618  00016E             ;******************** T0 中断程序********************************
+   619  00016E             T0_int:  ; T0 中断程序。//定时器T0中断 139us中断一次
+   620  00016E   7CC8(1+S)  	B0BTS1   FT0IRQ    ; 检查是否有 T0 中断请求标志。
+   621  00016F   8180(2)  	JMP      TC0_int   ;
+   622  000170   64C8(1)  	B0BCLR   FT0IRQ    ;清 T0IRQ。 ;// T0 中断请求标志清零。
+   623  000171   2DBA(1)  	MOV      A, #186   ;256-139/2 = 256- 69.5 = 186.5 每139us中断一次
+   624  000172   2FD9(1)  	B0MOV    T0C, A
+   625  000173             
+   626  000173   2DF0(1)          MOV      A, #0F0H
+   627  000174   0702(1+S)          CMPRS    A,IR_time 
+   628  000175             
+   629  000175   1602(1+S)          INCMS    IR_time
+   630  000176             
+   631  000176   1604(1+S)          INCMS    Touch_timeL
+   632  000177   8179(2)          JMP      timeLno0
+   633  000178   1605(1+S)          INCMS    Touch_timeH  
+   634  000179             timeLno0:      
+   635  000179   7000(1+S)          B0BTS0   IR_Flag        
+   636  00017A   1608(1+S)          INCMS    IR_count   ;//接收到红外数据,计数器加1
+   637  00017B   2D70(1)          MOV      A, #70H
+   638  00017C   2FD8(1)          B0MOV    T0M, A     ;16M/16/2= 2uS   Fcpu的2分频
+   639  00017D                 
+   640  00017D   6CC9(1)          B0BSET   FT0IEN     ; //允许响应 T0 中断。
+   641  00017E   6FD8(1)          B0BSET   FT0ENB     ; //启动定时器T0运行 
+   642  00017F   81A7(2)          JMP   Exit_int
+   643  000180             
+   644  000180             ;*************TC0中断子程序***********************************
+   645  000180             TC0_int:  ; TC0 中断程序。 250uS
+   646  000180   7DC8(1+S)          B0BTS1 FTC0IRQ   ; 检查是否有 TC0 中断请求标志。 
+   647  000181   81A7(2)  	JMP EXIT_INT     ; TC0IRQ = 0，退出中断。
+   648  000182   65C8(1)  	B0BCLR FTC0IRQ   ; 清 TC0IRQ。
+   649  000183   2D70(1)          MOV  A, #70H
+   650  000184   2FDA(1)          B0MOV TC0M, A;                  // 16MHz/16=  Fcpu/2   2us  256-250/2= 
+   651  000185   2D9B(1)          MOV  A, #155
+   652  000186   2FCD(1)          B0MOV  TC0R, A;                   //每隔125*2 =250us中断一次
+   653  000187   2FDB(1)          B0MOV  TC0C, A;                  
+   654  000188   6ADA(1)          B0BSET  FALOAD0;                  //使能 TC0 自动装载
+   655  000189   61DA(1)          B0BCLR	FTC0OUT;                  //允许P5.4口作PWM输出
+   656  00018A   60DA(1)  	B0BCLR	FPWM0OUT;                //允许PWM/BUZZER功能  
+   657  00018B                
+   658  00018B   7F00(1+S)          B0BTS1    buzzerEnableFlag
+   659  00018C   81A3(2)          JMP       BUZZER_OFF_DEAL
+   660  00018D                         
+   661  00018D   160A(1+S)          INCMS     buzzerCntL
+   662  00018E   8190(2)          JMP       banDaYu3000
+   663  00018F   160B(1+S)          INCMS     buzzerCntH
+   664  000190             banDaYu3000:   ;1000 = 0x3E8
+   665  000190   2D03(1)          MOV       A, #03H
+   666  000191   070B(1+S)          CMPRS     A, buzzerCntH
+   667  000192   819B(2)          JMP       BUZZER_BUDEN   ;跳转到buzzerCnt < 1000
+   668  000193   2DE8(1)          MOV       A, #0E8H       ;高字节相等再判断低字节
+   669  000194   070A(1+S)          CMPRS     A, buzzerCntL      
+   670  000195   819B(2)          JMP       BUZZER_BUDEN   ;高字节相等低字节不相等
+   671  000196   6700(1)          B0BCLR    buzzerEnableFlag
+   672  000197   2B0A(1)          CLR       buzzerCntL
+   673  000198   2B0B(1)          CLR       buzzerCntH
+   674  000199   64D5(1)          B0BCLR    BUZZER_PIN
+   675  00019A   81A5(2)          JMP       TC0_int_end
+   676  00019B             
+   677  00019B             BUZZER_BUDEN:
+   678  00019B   7E00(1+S)          B0BTS1    buzzerFlag
+   679  00019C   81A0(2)  	JMP       buzzerIs0
+   680  00019D   6600(1)          B0BCLR    buzzerFlag
+   681  00019E   64D5(1)          B0BCLR    BUZZER_PIN
+   682  00019F   81A5(2)          JMP       TC0_int_end
+   683  0001A0             buzzerIs0:
+   684  0001A0   6E00(1)          B0BSET    buzzerFlag
+   685  0001A1   6CD5(1)  	B0BSET	  BUZZER_PIN     
+   686  0001A2   81A5(2)          JMP       TC0_int_end
+   687  0001A3             
+   688  0001A3             BUZZER_OFF_DEAL:
+   689  0001A3   64D5(1)          B0BCLR    BUZZER_PIN
+   690  0001A4   81A5(2)          JMP       TC0_int_end
+   691  0001A5             TC0_int_end:
+   692  0001A5   6DC9(1)          B0BSET   FTC0IEN;                  ;//允许中断Enable TC0 Interrput
+   693  0001A6   6FDA(1)          B0BSET   FTC0ENB;                 ; // 定时器开启
+   694  0001A7                     ;JMP   Exit_int	
+   695  0001A7             Exit_int: ;退出中断
+   696  0001A7             
+   697  0001A7   0500(1)        POP
+   698  0001A8   0F00(2)        RETI
+   699  0001A9                   ENDP
+   700  0001A9             

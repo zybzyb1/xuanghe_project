@@ -1,0 +1,198 @@
+C51 COMPILER V9.59.0.0   INFRARED                                                          02/20/2023 18:06:57 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE INFRARED
+OBJECT MODULE PLACED IN .\Objects\infrared.obj
+COMPILER INVOKED BY: C:\Keil_C51\C51\BIN\C51.EXE src\infrared.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\src;.\Driver\inc;.\Dri
+                    -ver\src) DEBUG OBJECTEXTEND PRINT(.\Listings\infrared.lst) TABS(2) OBJECT(.\Objects\infrared.obj)
+
+line level    source
+
+   1          #include  "infrared.h"
+   2          #include  "stc8g1k_code.h"
+   3          #include  "STC8xxxx.h"
+   4          #include  "global.h"
+   5          #include  "uart.h"
+   6          #include  "string.h"
+   7          //数据定义
+   8          
+   9          bit edgeFlag = 0;   //红外管接收脚边沿标识
+  10          bit sysFunFlag;      //系统功能标志
+  11          bit IR_Flag=0;    //红外数据接收完成标志位
+  12          u8 IR_time=0;     //下降沿之间的时间计数值
+  13          u8 IR_data[9];    //引导码+8个位数据各自占用的时间
+  14          u8 IR_bit;    //变量IR_bit用于指示红外数据的位数
+  15          u8 btn_value=0; //红外按键键值寄存器
+  16          u8 IRdata_len = 0; //红外管接收到数据长度
+  17          u8 IRdata[IR_DATA_BUFFER_SIZE];
+  18          u32 time_cnt=0;     //定时计数器 计数单位1s
+  19          
+  20          
+  21          static void IR_Data_deal(void);
+  22          static u8 IR_decode(void);  
+  23          static void Int1_init(void);
+  24          
+  25          void infrared_init(void)
+  26          {
+  27   1          btn_value = 0;
+  28   1          edgeFlag = 1;
+  29   1          //红外输出检测
+  30   1          Int1_init();    //外部中断1初始化函数  红外输出脚  //触摸IC输出脚 
+  31   1        
+  32   1      }
+  33          void infrared_check_deal(void)
+  34          {
+  35   1          if(IR_Flag)       //红外数据接收完成
+  36   1          {
+  37   2              //后处理数据
+  38   2              if(IR_time >0xf0)
+  39   2              {   
+  40   3                  IR_time =0; 
+  41   3                  IR_Flag =0;         
+  42   3                  IR_Data_deal();
+  43   3              }
+  44   2          }
+  45   1      }
+  46          
+  47          
+  48          //-------------------红外接收数据处理-------------------------------
+  49          static void IR_Data_deal(void)
+  50          {
+  51   1          u8 dat=0,i,light=0,onoff=0;
+  52   1      
+  53   1          for(i=0;i<IRdata_len;i++) 
+  54   1          {
+C51 COMPILER V9.59.0.0   INFRARED                                                          02/20/2023 18:06:57 PAGE 2   
+
+  55   2              if(IRdata[i]==IR_LIGHT_BUTTON)
+  56   2                 light++;
+  57   2              else  if(IRdata[i]==IR_ONOFF_BUTTON)
+  58   2                 onoff++;
+  59   2          }
+  60   1          if(IRdata_len == 0)
+  61   1             return;
+  62   1          if(light > onoff)
+  63   1             dat = IR_LIGHT_BUTTON;
+  64   1          else if(light < onoff)
+  65   1             dat = IR_ONOFF_BUTTON;
+  66   1      
+  67   1          IRdata_len = 0;
+  68   1          
+  69   1          switch(dat)//红外接收正确
+  70   1          {
+  71   2            case  IR_LIGHT_BUTTON:   //灯档位调节键
+  72   2                   if(sysFunFlag==1)
+  73   2                   {
+  74   3                     btn_value++;
+  75   3                     if(btn_value > BUTTON_VALUE_MAX)
+  76   3                     {
+  77   4                        btn_value = 1;
+  78   4                     }
+  79   3      
+  80   3                   }
+  81   2                   else
+  82   2                     return;  
+  83   2            break;
+  84   2            case  IR_ONOFF_BUTTON:  //电源开关键
+  85   2                 if(sysFunFlag==1)
+  86   2                 {
+  87   3                     sysFunFlag = 0;
+  88   3                     btn_value = 0;
+  89   3                 }
+  90   2                 else
+  91   2                 {
+  92   3                     sysFunFlag = 1;
+  93   3                     btn_value = 1;
+  94   3                 }               
+  95   2            break;  
+  96   2            default:
+  97   2                  return;     
+  98   2          }
+  99   1          rdelay_acton_fun(btn_value);
+ 100   1      }
+ 101          
+ 102          //-------------------------红外接收解码-------------------------
+ 103          static u8 IR_decode(void)
+ 104          {
+ 105   1        u8 j;//,k;                
+ 106   1        u8 IR_Value = 0; 
+ 107   1        //k=0;              //先让变量k等于1，因为k为0时取出的将会是“引导码的时间间隔”
+ 108   1       
+ 109   1        for(j=0;j<=7;j++)       //内层循环8次为了拼合8个数据位为1个字节
+ 110   1        {
+ 111   2          if(IR_data[j]>=5)     //若“时间间隔”比5大那肯定是“1码”反之为“0码”
+ 112   2            IR_Value|=0x80;     //通过按位或运算高位填1
+ 113   2          if(j<7)               //若数据没有拼合完8次
+ 114   2            IR_Value>>=1;       //通过右移运算“腾出”位置准备下一位判定
+ 115   2          //k++;                  //下标变量自增
+ 116   2        }
+C51 COMPILER V9.59.0.0   INFRARED                                                          02/20/2023 18:06:57 PAGE 3   
+
+ 117   1        
+ 118   1        return IR_Value;        //返回红外接收的数据
+ 119   1      }
+ 120          
+ 121          //-------------------------外部中断1红外线输出引脚初始化-------------------------
+ 122          static void Int1_init(void)
+ 123          {
+ 124   1        IT1 = 1;  //触发方式为下降沿触发
+ 125   1        EX1 = 1;  //使能INT1中断
+ 126   1      }
+ 127          void INT1_ISR() interrupt INT1_VECTOR  //连接红外管接收脚
+ 128          {
+ 129   1        static u8 isRec=0; 
+ 130   1      
+ 131   1        if(edgeFlag) //下沿中断
+ 132   1        {   //高电平达到9ms为开始 位
+ 133   2            IT1 = 0;  //触发方式为上沿触发
+ 134   2            EX1 = 1;  //使能INT1中断
+ 135   2            edgeFlag = 0; 
+ 136   2            if(IR_time>50)  //判断引导码(9ms+1.12ms)（0.56ms+1.12ms）
+ 137   2            {
+ 138   3                  isRec = 1;
+ 139   3                  IR_bit = 0;
+ 140   3            }
+ 141   2            
+ 142   2        }
+ 143   1        else
+ 144   1        {   //上沿中断
+ 145   2          IT1 = 1;  //触发方式为下降沿触发
+ 146   2          EX1 = 1;  //使能INT1中断
+ 147   2          edgeFlag = 1;
+ 148   2      
+ 149   2          if(isRec)
+ 150   2          {
+ 151   3                  IR_data[IR_bit]=IR_time;    //存储相应位时间宽度
+ 152   3                  IR_time=0;            //清零时间宽度计数值
+ 153   3                  IR_bit++;             //位数变量自增
+ 154   3                  if(IR_bit==8)         //如果达到了9位（引导码+8个数据位）
+ 155   3                  {
+ 156   4                    IR_Flag=1;          //红外数据接收完成标志位置1
+ 157   4                    IR_bit=0;           //位数变量清零
+ 158   4                    isRec =0;
+ 159   4                    
+ 160   4                    IRdata[IRdata_len] = IR_decode();
+ 161   4                    ++IRdata_len;
+ 162   4                    if(IRdata_len >= IR_DATA_BUFFER_SIZE) 
+ 163   4                        IRdata_len=0;
+ 164   4                  }
+ 165   3          }
+ 166   2        }
+ 167   1        IR_time =0;  //清零时间宽度计数值
+ 168   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    318    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     28    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      3    ----
+C51 COMPILER V9.59.0.0   INFRARED                                                          02/20/2023 18:06:57 PAGE 4   
+
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

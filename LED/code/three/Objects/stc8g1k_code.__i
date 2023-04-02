@@ -1,0 +1,1 @@
+"src\stc8g1k_code.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(.\src;.\Driver\inc;.\Driver\src) DEBUG OBJECTEXTEND PRINT(.\Listings\stc8g1k_code.lst) TABS (2) OBJECT(.\Objects\stc8g1k_code.obj)

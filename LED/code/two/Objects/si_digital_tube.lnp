@@ -1,0 +1,17 @@
+".\Objects\STARTUP.obj",
+".\Objects\led2_digital_tube.obj",
+".\Objects\stc8g1k_code.obj",
+".\Objects\uart.obj",
+".\Objects\infrared.obj",
+".\Objects\touch.obj",
+".\Objects\temperature.obj",
+".\Objects\adc.obj",
+".\Objects\buzzer.obj",
+".\Objects\encryptionDecryption.obj",
+".\Objects\areaFill1.obj",
+".\Objects\areaFill2.obj",
+".\Objects\STC8G_H_ADC.obj",
+".\Objects\STC8G_H_GPIO.obj" 
+TO ".\Objects\si_digital_tube" 
+PRINT(".\Listings\si_digital_tube.m51") RAMSIZE(256) 
+CODE( ?CO?areaFill1(0x200),?CO?areaFill2(0x280) )

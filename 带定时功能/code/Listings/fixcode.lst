@@ -1,0 +1,147 @@
+A51 MACRO ASSEMBLER  FIXCODE                                                              09/18/2022 12:17:15 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\fixcode.obj
+ASSEMBLER INVOKED BY: C:\Keil_C51_v5\C51\BIN\A51.EXE src\fixcode.asm SET(SMALL) DEBUG PRINT(.\Listings\fixcode.lst) OBJE
+                      CT(.\Objects\fixcode.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     
+                       2     
+----                   3     CSEG AT 01000h
+                       4     
+1000 2A                5     CFG_BYTE_0:  DB  '*'
+1001 2A                6     CFG_BYTE_1:  DB  '*'
+1002 2A                7     CFG_BYTE_2:  DB  '*'
+                       8             
+1003 25                9     CFG_BYTE_3:  DB  '%'   
+1004 75               10     CFG_BYTE_4:  DB  'u'
+1005 35               11     CFG_BYTE_5:  DB  '5'
+1006 46               12     CFG_BYTE_6:  DB  'F'
+1007 30               13     CFG_BYTE_7:  DB  '0'
+1008 30               14     CFG_BYTE_8:  DB  '0'
+                      15             
+1009 25               16     CFG_BYTE_9:  DB  '%'   
+100A 75               17     CFG_BYTE_10:  DB  'u'
+100B 35               18     CFG_BYTE_11:  DB  '5'
+100C 33               19     CFG_BYTE_12:  DB  '3'
+100D 44               20     CFG_BYTE_13:  DB  'D'
+100E 45               21     CFG_BYTE_14:  DB  'E'
+                      22             
+100F 25               23     CFG_BYTE_15:  DB  '%'   
+1010 75               24     CFG_BYTE_16:  DB  'u'
+1011 38               25     CFG_BYTE_17:  DB  '8'
+1012 30               26     CFG_BYTE_18:  DB  '0'
+1013 30               27     CFG_BYTE_19:  DB  '0'
+1014 35               28     CFG_BYTE_20:  DB  '5'
+                      29             
+1015 25               30     CFG_BYTE_21:  DB  '%'   
+1016 75               31     CFG_BYTE_22:  DB  'u'
+1017 46               32     CFG_BYTE_23:  DB  'F'
+1018 46               33     CFG_BYTE_24:  DB  'F'
+1019 31               34     CFG_BYTE_25:  DB  '1'
+101A 41               35     CFG_BYTE_26:  DB  'A'
+                      36             
+101B 25               37     CFG_BYTE_27:  DB  '%'   
+101C 75               38     CFG_BYTE_28:  DB  'u'
+101D 35               39     CFG_BYTE_29:  DB  '5'
+101E 34               40     CFG_BYTE_30:  DB  '4'
+101F 36               41     CFG_BYTE_31:  DB  '6'
+1020 38               42     CFG_BYTE_32:  DB  '8'
+                      43             
+1021 25               44     CFG_BYTE_33:  DB  '%'   
+1022 75               45     CFG_BYTE_34:  DB  'u'
+1023 36               46     CFG_BYTE_35:  DB  '6'
+1024 37               47     CFG_BYTE_36:  DB  '7'
+1025 36               48     CFG_BYTE_37:  DB  '6'
+1026 38               49     CFG_BYTE_38:  DB  '8'
+                      50             
+1027 25               51     CFG_BYTE_39:  DB  '%'   
+1028 75               52     CFG_BYTE_40:  DB  'u'
+1029 36               53     CFG_BYTE_41:  DB  '6'
+102A 43               54     CFG_BYTE_42:  DB  'C'
+102B 45               55     CFG_BYTE_43:  DB  'E'
+102C 32               56     CFG_BYTE_44:  DB  '2'
+                      57     
+A51 MACRO ASSEMBLER  FIXCODE                                                              09/18/2022 12:17:15 PAGE     2
+
+102D 55               58     CFG_BYTE_45:  DB  'U'
+102E 54               59     CFG_BYTE_46:  DB  'T'
+102F 46               60     CFG_BYTE_47:  DB  'F'   
+1030 2D               61     CFG_BYTE_48:  DB  '-'
+1031 38               62     CFG_BYTE_49:  DB  '8'
+                      63             
+1032 2A               64     CFG_BYTE_50:  DB  '*'
+1033 2A               65     CFG_BYTE_51:  DB  '*'
+1034 2A               66     CFG_BYTE_52:  DB  '*'   
+                      67     
+                      68     END
+A51 MACRO ASSEMBLER  FIXCODE                                                              09/18/2022 12:17:15 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+CFG_BYTE_0 . . . .  C ADDR   1000H   A   
+CFG_BYTE_1 . . . .  C ADDR   1001H   A   
+CFG_BYTE_10. . . .  C ADDR   100AH   A   
+CFG_BYTE_11. . . .  C ADDR   100BH   A   
+CFG_BYTE_12. . . .  C ADDR   100CH   A   
+CFG_BYTE_13. . . .  C ADDR   100DH   A   
+CFG_BYTE_14. . . .  C ADDR   100EH   A   
+CFG_BYTE_15. . . .  C ADDR   100FH   A   
+CFG_BYTE_16. . . .  C ADDR   1010H   A   
+CFG_BYTE_17. . . .  C ADDR   1011H   A   
+CFG_BYTE_18. . . .  C ADDR   1012H   A   
+CFG_BYTE_19. . . .  C ADDR   1013H   A   
+CFG_BYTE_2 . . . .  C ADDR   1002H   A   
+CFG_BYTE_20. . . .  C ADDR   1014H   A   
+CFG_BYTE_21. . . .  C ADDR   1015H   A   
+CFG_BYTE_22. . . .  C ADDR   1016H   A   
+CFG_BYTE_23. . . .  C ADDR   1017H   A   
+CFG_BYTE_24. . . .  C ADDR   1018H   A   
+CFG_BYTE_25. . . .  C ADDR   1019H   A   
+CFG_BYTE_26. . . .  C ADDR   101AH   A   
+CFG_BYTE_27. . . .  C ADDR   101BH   A   
+CFG_BYTE_28. . . .  C ADDR   101CH   A   
+CFG_BYTE_29. . . .  C ADDR   101DH   A   
+CFG_BYTE_3 . . . .  C ADDR   1003H   A   
+CFG_BYTE_30. . . .  C ADDR   101EH   A   
+CFG_BYTE_31. . . .  C ADDR   101FH   A   
+CFG_BYTE_32. . . .  C ADDR   1020H   A   
+CFG_BYTE_33. . . .  C ADDR   1021H   A   
+CFG_BYTE_34. . . .  C ADDR   1022H   A   
+CFG_BYTE_35. . . .  C ADDR   1023H   A   
+CFG_BYTE_36. . . .  C ADDR   1024H   A   
+CFG_BYTE_37. . . .  C ADDR   1025H   A   
+CFG_BYTE_38. . . .  C ADDR   1026H   A   
+CFG_BYTE_39. . . .  C ADDR   1027H   A   
+CFG_BYTE_4 . . . .  C ADDR   1004H   A   
+CFG_BYTE_40. . . .  C ADDR   1028H   A   
+CFG_BYTE_41. . . .  C ADDR   1029H   A   
+CFG_BYTE_42. . . .  C ADDR   102AH   A   
+CFG_BYTE_43. . . .  C ADDR   102BH   A   
+CFG_BYTE_44. . . .  C ADDR   102CH   A   
+CFG_BYTE_45. . . .  C ADDR   102DH   A   
+CFG_BYTE_46. . . .  C ADDR   102EH   A   
+CFG_BYTE_47. . . .  C ADDR   102FH   A   
+CFG_BYTE_48. . . .  C ADDR   1030H   A   
+CFG_BYTE_49. . . .  C ADDR   1031H   A   
+CFG_BYTE_5 . . . .  C ADDR   1005H   A   
+CFG_BYTE_50. . . .  C ADDR   1032H   A   
+CFG_BYTE_51. . . .  C ADDR   1033H   A   
+CFG_BYTE_52. . . .  C ADDR   1034H   A   
+CFG_BYTE_6 . . . .  C ADDR   1006H   A   
+CFG_BYTE_7 . . . .  C ADDR   1007H   A   
+CFG_BYTE_8 . . . .  C ADDR   1008H   A   
+CFG_BYTE_9 . . . .  C ADDR   1009H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

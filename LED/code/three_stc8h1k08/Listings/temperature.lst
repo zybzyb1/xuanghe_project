@@ -1,0 +1,135 @@
+C51 COMPILER V9.59.0.0   TEMPERATURE                                                       02/15/2023 10:30:41 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE TEMPERATURE
+OBJECT MODULE PLACED IN .\Objects\temperature.obj
+COMPILER INVOKED BY: C:\Keil_C51\C51\BIN\C51.EXE src\temperature.c OMF2 OPTIMIZE(8,SPEED) BROWSE INCDIR(.\src;.\Driver\i
+                    -nc;.\Driver\src) DEBUG PRINT(.\Listings\temperature.lst) TABS(2) OBJECT(.\Objects\temperature.obj)
+
+line level    source
+
+   1          #include "temperature.h"
+   2          #include "adc.h"
+   3          #include  "stc8g1k_code.h"
+   4          #include "uart.h"
+   5          bit overtemperature_flag;   //过温报警标志
+   6          bit overtemp_flag;          //过温报警临时标志
+   7          bit secFlag;       //秒标志
+   8          u8  delay_time;
+   9          
+  10          static void ADC_config(void);
+  11          
+  12          void temperature_init(void)
+  13          {
+  14   1          overtemperature_flag = 0;
+  15   1          overtemp_flag = 0;
+  16   1          secFlag=0;      
+  17   1          delay_time=0;
+  18   1          ADC_config();   //电路板温度检测  
+  19   1      }
+  20          #define    TEMP70_VAL    477    //70度对应的ADC值  0X1DD
+  21          #define    TEMP60_VAL    556    //60度对应的ADC值  0X22C
+  22          
+  23          //------------------------------------------------
+  24          void  temperature_get_deal(void)
+  25          {
+  26   1          u16  ad_dat;
+  27   1         
+  28   1          if(secFlag==1)  //1秒 ADC一次
+  29   1          {
+  30   2              secFlag = 0;
+  31   2              ad_dat = Get_ADCResult(ADC_CH5);  //读取ADC定时值
+  32   2              #ifdef UART_ENABLE
+                      TX1_write2buff((u8)(ad_dat>>8));
+                      TX1_write2buff((u8)ad_dat);
+                      #endif  
+  36   2              if(ad_dat == 4096)  return;   //出错
+  37   2              
+  38   2              if(ad_dat < TEMP70_VAL)//高于70度 保护功能开启  温度越高ADC值越低
+  39   2              {     
+  40   3                  overtemp_flag = 1;  //保护功能开启
+  41   3                          
+  42   3              }
+  43   2              else if(ad_dat > TEMP60_VAL)//低于60度 保护功能关闭   温度越高ADC值越低
+  44   2              {
+  45   3                  overtemp_flag = 0;  //定时功能关闭            
+  46   3              } 
+  47   2              else 
+  48   2              {
+  49   3                   delay_time=0;
+  50   3                   return;
+  51   3              }
+  52   2              if(delay_time++ > 4)   //报警标志状态保持5秒以上才可确定
+  53   2              {
+  54   3                   overtemperature_flag = overtemp_flag;
+C51 COMPILER V9.59.0.0   TEMPERATURE                                                       02/15/2023 10:30:41 PAGE 2   
+
+  55   3                   delay_time =0; 
+  56   3              }
+  57   2             
+  58   2          } 
+  59   1          
+  60   1      }
+  61          u8 overtemperature_check(void)
+  62          {
+  63   1        static bit  preOvertemperature_flag = 0;
+  64   1        
+  65   1        if(overtemperature_flag ==1)
+  66   1        {
+  67   2            rdelay_acton_fun(5);
+  68   2            if(preOvertemperature_flag ==0)
+  69   2            {
+  70   3                display_para(1);
+  71   3                preOvertemperature_flag = 1; 
+  72   3            }
+  73   2            return 1;
+  74   2        }
+  75   1        else
+  76   1        {
+  77   2            if(preOvertemperature_flag)
+  78   2            {
+  79   3                preOvertemperature_flag =0;
+  80   3                display_para(0);
+  81   3            }
+  82   2        }
+  83   1        return 0;
+  84   1      }
+  85          //========================================================================
+  86          static void ADC_config(void)
+  87          {
+  88   1        
+  89   1        ADC_InitTypeDef   ADC_InitStructure;    //结构定义
+  90   1        ADC_InitStructure.ADC_SMPduty   = 31;   //ADC 模拟信号采样时间控制, 0~31（注意： SMPDUTY 一定不能设置小于 
+             -10）
+  91   1        ADC_InitStructure.ADC_CsSetup   = 0;    //ADC 通道选择时间控制 0(默认),1
+  92   1        ADC_InitStructure.ADC_CsHold    = 1;    //ADC 通道选择保持时间控制 0,1(默认),2,3
+  93   1        ADC_InitStructure.ADC_Speed     = ADC_SPEED_2X1T;   //设置 ADC 工作时钟频率 ADC_SPEED_2X1T~ADC_SPEED_2X16T
+  94   1        ADC_InitStructure.ADC_AdjResult = ADC_RIGHT_JUSTIFIED;  //ADC结果调整,  ADC_LEFT_JUSTIFIED,ADC_RIGHT_JUSTIF
+             -IED
+  95   1        ADC_Inilize(&ADC_InitStructure);    //初始化
+  96   1        ADC_PowerControl(ENABLE);           //ADC电源开关, ENABLE或DISABLE
+  97   1        //NVIC_ADC_Init(DISABLE,Polity_0);    //中断使能, ENABLE/DISABLE; 优先级(低到高) Polity_0,Polity_1,Polity_2
+             -,Polity_3
+  98   1        
+  99   1      }
+ 100          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    137    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1       8
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      4    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+C51 COMPILER V9.59.0.0   TEMPERATURE                                                       02/15/2023 10:30:41 PAGE 3   
+
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,172 @@
+[Template]
+ProjectTemplateModule=.\Bin\Template\SN8Project.dll
+TemplateSource=.\Template\Project-SN8P2500.prt
+TemplateVersion=MCU_2700A.130403
+AdvancedSetting=0
+
+GeneralSet=1
+ChipSet=1
+DirectorySet=1
+CompilerSet=1
+MacroProcessorSet=1
+LinkerSet=1
+SimulatorSet=1
+CodeOptionSet = 1
+SerialNOSet=1
+RomConverterSet=0
+ICESet=0
+
+[General]
+Type=SN8P2500 Series Project
+Description=SN8P2500 Series Project
+UseSimulator=0
+DebugInfoDefinitionFile=.\Template\SN8DebugInfo.def
+ChipMiscConfigFile=.\Bin\Build\SN8P2600.ini
+WatchCaseSensitive=0
+LogScriptFile=.\Obj\c_rc.log
+LogScriptFileExt=log
+LogFileToDump=.\Obj\c_rc.dmp
+LogFileToDumpExt=dmp
+IsGenerateDebugInformation=0
+ProtectProject=0
+WarningLevel=3
+EnableWizard=0
+ChipMiscConfigFile2=
+EnableSimulatorWnd=1
+
+[Module]
+;chip category
+ChipInfo=.\Bin\Chip\SN8ChipInformation.dll
+
+;debug category
+Debugger=.\Bin\Debug\Debugger.dll
+DebugInfo=.\Bin\Debug\DebugInformation.dll
+Disassembler=.\Bin\Debug\SN8Disassembler.dll
+Simulator=.\Bin\Debug\SN8Emulator.dll
+Emulator=.\Bin\Debug\SN8Emulator.dll
+ICE=.\Bin\Debug\SN8ICE.dll
+
+;build category
+Maker=.\Bin\Build\make.exe
+Compiler=.\Bin\Build\SN8pc.exe
+
+Assembler=.\Bin\Build\gma.exe
+Linker=.\Bin\Build\slink.exe
+Librarian=.\Bin\Build\slib.exe
+RomConverter=.\Bin\Build\RcvSN8.exe
+InstrumentGenerator=.\Bin\Build\genins.exe
+MakefileGenerator=.\Bin\Build\MakefileGenerator.dll
+EzCompiler=.\Bin\Build\Geza.exe
+PostLinkOptimizer=.\Bin\Build\spostlink.exe
+INCParser=.\Bin\Build\ginp.exe
+
+[Chip]
+ChipIndexFile=.\Chip\SN8\ChipIndex_2500.ini
+ChipName=SN8P2501B
+
+[Makefile]
+Active=0
+Count=1
+Makefile0=.\makefile
+
+[Build]
+;directory category
+IntermediateOutputPath=.\Obj
+StandardLibraryPath=
+AdditionalIncludePath=.\Include
+AdditionalLibraryPath=.\Lib
+AdditionalLinkedLibraries=
+
+;Compiler category
+CompilerDefinedSymbols=
+CompilerUndefinedSymbols=
+CompilerExtraOptions=-cpp_skip_asm
+IsWarnMoreMessages=1
+IsSuppressWarnings=0
+IsPreprocessorResultOnly=0
+NewCompilerSeries=1
+UseOldCompiler=0
+
+;MacroProcessor category
+DefinedSymbols=
+IsGenerateListFile=1
+
+;Assembler category
+
+;Linker category
+LinkerOutputFile=.\Bin\c_rc.out
+LinkerOutputFileExt=out
+IsGenerateMapFile=1
+MapFile=.\Obj\c_rc.map
+MapFileExt=map
+StackSize=
+IsGenerateMacroProcessorOutFile=1
+
+;Librarian category
+LibrarianOutputFile=
+LibrarianOutputFileExt=
+
+;RomConverter category
+RomConverterOutputFile=.\Bin\c_rc.sn8
+RomConverterOutputFileExt=sn8
+RomConverterSecurityID=0,0
+SplitSizeAlternative=4M, 8M
+SplitSize=4M
+
+;Optimization
+IsRunPostLinkOptimization=1
+IsRunPeepholeOptimization=1
+IsRunJumpTableOptimization=1
+IsRunDataNoOverLayOptimization=1
+AssemblerExtraOptions=
+RegisterX=X
+RegisterY=Y
+RegisterZ=Z
+RegisterH=H
+RegisterL=L
+RegisterR=R
+IsRomAllocate=0
+IsRamAllocate=0
+IsRunGlobalOptimization=0
+IsSN8Modified=0
+IsMultipleFun=0
+IsEnable190=0
+IsCheckStackLevel=0
+ExternalDeviceCount=0
+
+[ICE]
+ICEMaxBreakpointSize=10
+
+[ProjectFolder]
+Count=2
+Folder0-Name=Source
+Folder0-Extension=c;asm;lk
+Folder1-Name=Header
+Folder1-Extension=h
+
+[ProjectFile]
+Count=2
+File0=.\Src\rc.c
+File1=.\Include\global.h
+
+[Simulator]
+KeyboardPanel-ID=Keyboard Panel
+KeyboardPanel-PanelFileKey=Keyboard Panel
+KeyboardPanel-PanelFile=
+KeyboardPanel-Module=.\Bin\Debug\KeyboardSimulator.dll
+KeyboardPanel-Available=0
+
+[CScanner]
+CScannerModule = .\Bin\General\SN8CScanner.dll
+IncludePath = .\C\MCU\SN8\include
+UseCScanner = 1
+
+[SerialNO]
+RollingCodeEnable=ALL
+UniqueCodeEnable=SN8P26L34,SN8P2977A
+RollingCodeAddress=
+RollingCodeSize=
+IsRollingCode=0
+IsUniqueCode=0
+[INC_MTIME]
+Time_t=1380291094

@@ -1,0 +1,26 @@
+[Common]
+ICE_MODE =0
+EnableCodeOption = 0
+CodeOption_Length = 64
+Mask_CodeOption =0xFFFFE7FFFA5AEA1E
+OTP_CodeOption =0xFFFFE7FFFA5AEA1E
+[CodeOption]
+Items=Noise_Filter,Security,Fcpu,High_Clk,Watch_Dog,Reset_Pin,LVD
+Noise_Filter=0
+Security=1
+Fcpu=7
+High_Clk=0
+Watch_Dog=10
+Reset_Pin=0
+LVD=3
+
+[Simulation]
+Chip_Series=2
+Noise_Filter=Disable
+Security=Disable
+Fcpu=Fosc/16
+High_Clk=IHRC_16M
+Watch_Dog=Disable
+Reset_Pin=P11
+LVD=LVD_L
+

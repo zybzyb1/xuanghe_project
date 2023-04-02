@@ -1,0 +1,54 @@
+;**************** 红外处理************************
+IR_deal: 
+        B0BTS1     IR_Flag
+        JMP        IR_deal_end
+        MOV        A,#230
+        CMPRS      A,IR_count
+        JMP        IR_noden      ;IR_count != 230 还存在 IR_count > 230的情况
+IR_den:
+        B0BCLR     IR_Flag       ;IR_count = 230 //红外数据接收完成后 230*139 = 31970us处理数据
+        CLR        IR_count
+        
+        B0MOV      A, IRdata
+	AND        A, #0FH
+	B0MOV      tempVal,A  ;低四位代表IR_LIGHT_BUTTON键值 
+        
+        B0MOV      A, IRdata
+	AND        A, #F0H 
+        B0BCLR     FC          ;高四位代表IR_ONOFF_BUTTON键值
+        RRCM       A
+        RRCM       A
+        RRCM       A
+        RRCM       A  
+        CMPRS      A, tempVal
+	JMP        IR_noDen    ;如果两键值不相等则继续判断
+        JMP        IR_deal_end ;如果两键值相等则退出
+IR_noDen：      ;如果两键值不相等则继续判断
+        B0BTCS0    FC
+        JMP        onoffDeal ;没借位，说明IR_ONOFF_BUTTON键值 > IR_LIGHT_BUTTON键值 
+                             ;借位，说明IR_ONOFF_BUTTON键值 < IR_LIGHT_BUTTON键值
+        ;灯档位调节键处理 
+        B0BTCS1    sysFunFlag ;
+        JMP        IR_deal_end ;
+        CALL       btn_inc_fun
+        JMP        IR_deal_end ;  
+
+onoffDeal:   ;电源开关键处理
+        B0BTCS0    sysFunFlag ;电源开关键处理
+        JMP        sysFlag0   ;sysFunFlag=1处理
+        B0BSET     sysFunFlag ;sysFunFlag=0处理 
+        MOV        A,#1
+        B0MOV      btn_value,A
+        JMP        IR_deal_end ;
+sysFlag0:     ;sysFunFlag=1处理
+        B0BCLR     sysFunFlag ;sysFunFlag=0处理 
+        CLR        btn_value
+        JMP        IR_deal_end ;	
+IR_noden：
+      B0BTCS1     FC
+      JMP         IR_den ;发生了借位说明IR_count > 230
+      ;JMP         IR_deal_end            
+IR_deal_end:
+      CLR  A
+      RET
+;******************end***********************************
