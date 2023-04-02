@@ -1,1 +1,0 @@
-"src\areaFill2.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(.\src;.\Driver\inc;.\Driver\src) DEBUG OBJECTEXTEND PRINT(.\Listings\areaFill2.lst) TABS (2) OBJECT(.\Objects\areaFill2.obj)

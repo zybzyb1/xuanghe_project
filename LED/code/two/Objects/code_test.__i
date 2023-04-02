@@ -1,1 +1,0 @@
-"src\code_test.c" OMF2 OPTIMIZE (8,SPEED) BROWSE INCDIR(.\src;.\Driver\inc;.\Driver\src) DEBUG PRINT(.\Listings\code_test.lst) TABS (2) OBJECT(.\Objects\code_test.obj)

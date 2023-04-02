@@ -1,1 +1,0 @@
-"Driver\src\STC8G_H_GPIO.c" OMF2 OPTIMIZE (8,SPEED) BROWSE INCDIR(.\src;.\Driver\inc;.\Driver\src) DEBUG PRINT(.\Listings\STC8G_H_GPIO.lst) TABS (2) OBJECT(.\Objects\STC8G_H_GPIO.obj)

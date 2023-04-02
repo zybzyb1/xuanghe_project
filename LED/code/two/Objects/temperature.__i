@@ -1,1 +1,0 @@
-"src\temperature.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(.\src;.\Driver\inc;.\Driver\src) DEBUG OBJECTEXTEND PRINT(.\Listings\temperature.lst) TABS (2) OBJECT(.\Objects\temperature.obj)
